@@ -21,21 +21,22 @@ $(call inherit-product-if-exists, vendor/asus/tf700t/tf700t-vendor.mk)
 
 DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
 
-	
+
 # This device is hdpi.
 PRODUCT_AAPT_CONFIG := xlarge hdpi mdpi
 PRODUCT_AAPT_PREF_CONFIG := hdpi
 #PRODUCT_LOCALES += hdpi
 
 # Prebuilt kernel location
-#ifeq ($(TARGET_PREBUILT_KERNEL),)
-#        LOCAL_KERNEL := device/asus/tf700t/kernel
-#else
-#        LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
-#endif
+ifeq ($(TARGET_PREBUILT_KERNEL),)
+        LOCAL_KERNEL := device/asus/tf700t/prebuilt/kernel
+else
+        LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+endif
 
 # Files needed for boot image
 PRODUCT_COPY_FILES += \
+    $(LOCAL_KERNEL):kernel \
     $(LOCAL_PATH)/ramdisk/init.rc:root/init.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.rc:root/init.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.keyboard.rc:root/init.cardhu.keyboard.rc \
@@ -43,16 +44,18 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/ramdisk/init.cardhu.usb.rc:root/init.cardhu.usb.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.cpu.rc:root/init.cardhu.cpu.rc
 
-    #$(LOCAL_KERNEL):kernel \
 
 # Kernel modules
-#PRODUCT_COPY_FILES += \
+PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/lib/baseband_usb_chr.ko:system/lib/modules/baseband_usb_chr.ko \
     $(LOCAL_PATH)/prebuilt/lib/baseband-xmm-power2.ko:system/lib/modules/baseband-xmm-power2.ko \
+    $(LOCAL_PATH)/prebuilt/lib/brcmfmac.ko:system/lib/modules/brcmfmac.ko \
     $(LOCAL_PATH)/prebuilt/lib/raw_ip_net.ko:system/lib/modules/raw_ip_net.ko \
     $(LOCAL_PATH)/prebuilt/lib/scsi_wait_scan.ko:system/lib/modules/scsi_wait_scan.ko \
-    $(LOCAL_PATH)/prebuilt/lib/tcrypt.ko:system/lib/modules/tcrypt.ko \
-    $(LOCAL_PATH)/prebuilt/lib/bcm4329.ko:system/lib/modules/bcm4329.ko \
+    $(LOCAL_PATH)/prebuilt/lib/tcrypt.ko:system/lib/modules/tcrypt.ko
+  
+# not needed
+#  $(LOCAL_PATH)/prebuilt/lib/bcm4329.ko:system/lib/modules/bcm4329.ko \
     $(LOCAL_PATH)/prebuilt/lib/bcmdhd_29.ko:system/lib/modules/bcmdhd_29.ko \
     $(LOCAL_PATH)/prebuilt/lib/bcmdhd_34.ko:system/lib/modules/bcmdhd_34.ko \
     $(LOCAL_PATH)/prebuilt/lib/bcmdhd.ko:system/lib/modules/bcmdhd.ko \
@@ -71,11 +74,11 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/bin/rild:system/bin/rild \
     $(LOCAL_PATH)/prebuilt/bin/brcm_patchram_plus:system/bin/brcm_patchram_plus \
     $(LOCAL_PATH)/prebuilt/bin/wifimacwriter:system/bin/wifimacwriter \
-    $(LOCAL_PATH)/prebuilt/bin/touch_fw_update:system/bin/touch_fw_update 
+    $(LOCAL_PATH)/prebuilt/bin/touch_fw_update:system/bin/touch_fw_update
 
 # Prebuilt apks
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/app/FixPortrait.apk:system/app/FixPortrait.apk 
+    $(LOCAL_PATH)/prebuilt/app/FixPortrait.apk:system/app/FixPortrait.apk
 
 # Input device configuration files
 PRODUCT_COPY_FILES += \
@@ -111,8 +114,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/firmware/bcm4330/fw_bcmdhd_p2p.bin:system/vendor/firmware/bcm4330/fw_bcmdhd_p2p.bin \
     $(LOCAL_PATH)/prebuilt/firmware/bcm4329/fw_bcmdhd.bin:system/vendor/firmware/bcm4329/fw_bcmdhd.bin \
     $(LOCAL_PATH)/prebuilt/firmware/bcm4329/fw_bcmdhd_apsta.bin:system/vendor/firmware/bcm4329/fw_bcmdhd_apsta.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4329/fw_bcmdhd_p2p.bin:system/vendor/firmware/bcm4329/fw_bcmdhd_p2p.bin 
-
+    $(LOCAL_PATH)/prebuilt/firmware/bcm4329/fw_bcmdhd_p2p.bin:system/vendor/firmware/bcm4329/fw_bcmdhd_p2p.bin
 
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
@@ -140,11 +142,15 @@ PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml \
     $(LOCAL_PATH)/asusdec/com.cyanogenmod.asusdec.xml:system/etc/permissions/com.cyanogenmod.asusdec.xml
 
-# Build characteristics setting 
+# Build characteristics setting
 PRODUCT_CHARACTERISTICS := tablet
 
 # This device have enough room for precise davick
 PRODUCT_TAGS += dalvik.gc.type-precise
+
+# torch app
+PRODUCT_PACKAGES += \
+	Torch
 
 # Extra packages to build for this device
 PRODUCT_PACKAGES += \
