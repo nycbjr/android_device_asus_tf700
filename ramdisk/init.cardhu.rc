@@ -187,7 +187,10 @@ on boot
     insmod /sbin/texfat.ko
 
 #insmod cfg80211.ko for cfg80211 and P2P mode.
-#    insmod /system/lib/modules/cfg80211.ko
+    insmod /system/lib/modules/cfg80211.ko
+
+#insmod bcmdhd driver for BCM4330/BCM4334
+    insmod /system/lib/modules/bcmdhd.ko
 
 # Touch
     start touch_update
