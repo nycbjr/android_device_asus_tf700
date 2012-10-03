@@ -43,7 +43,7 @@ ARCH_ARM_HAVE_TLS_REGISTER := true
 NEED_WORKAROUND_CORTEX_A9_745320 := true
 
 # Boot/Recovery image settings  
-BOARD_KERNEL_CMDLINE := 
+BOARD_KERNEL_CMDLINE := tegraid=30.1.3.0.0 mem=1022M@2048M commchip_id=0 androidboot.commchip_id=0 video=tegrafb no_console_suspend=1 console=ttyS0,115200n8 debug_uartport=lsport,0 usbcore.old_scheme_first=1 lp0_vec=8192@0xbddf9000 tegra_fbmem=9219840@0xabc01000 core_edp_mv=0 audio_codec=wm8903 board_info=245:0:44:de:28 tegraboot=sdmmc gpt gpt_sector=62078975 android.kerneltype=normal androidboot.productid=0x04 androidboot.carrier=wifi-only 
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE :=
 
