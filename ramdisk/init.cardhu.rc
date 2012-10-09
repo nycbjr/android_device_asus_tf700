@@ -60,6 +60,8 @@ on boot
 
 #NFC
 #   setprop ro.nfc.port "I2C"
+#    chmod 0660 /dev/pn544
+#    chown nfc nfc /dev/pn544
 
 # nvdps
     chown system system /sys/class/graphics/fb0/device/nvdps
@@ -90,8 +92,8 @@ on boot
     chown system system /sys/module/cpu_tegra/parameters/pwr_cap_limit_4
 
 # Sensor
-    mkdir /data/sensors 0640 system system
-    mkdir /data/lightsensor 0640 system system
+#    mkdir /data/sensors 0640 system system
+#    mkdir /data/lightsensor 0640 system system
     chmod 666 /dev/nvhost-ctrl
     chmod 666 /dev/nvhost-display
     chmod 666 /dev/nvhost-dsi
@@ -114,12 +116,12 @@ on boot
     chmod 777 /sys/devices/platform/tegra-i2c.2/i2c-2/2-000f/delay
 
     # new nodes from linux kernel v3.4
-    chown system system /sys/bus/iio/devices/iio:device0/als_ir_mode
-    chown system system /sys/bus/iio/devices/iio:device0/als_enable
-    chown system system /sys/bus/iio/devices/iio:device0/proximity_enable
-    insmod /system/lib/modules/mpu3050.ko
-    insmod /system/lib/modules/inv_mpu_kxtf9.ko
-    insmod /system/lib/modules/inv_mpu_ak8975.ko
+#    chown system system /sys/bus/iio/devices/iio:device0/als_ir_mode
+#    chown system system /sys/bus/iio/devices/iio:device0/als_enable
+#    chown system system /sys/bus/iio/devices/iio:device0/proximity_enable
+#    insmod /system/lib/modules/mpu3050.ko
+#    insmod /system/lib/modules/inv_mpu_kxtf9.ko
+#    insmod /system/lib/modules/inv_mpu_ak8975.ko
 
 # Power management settings
     chown system system /sys/module/cpu_tegra3/parameters/no_lp
@@ -163,6 +165,8 @@ on boot
     mkdir /data/gps
     chown system system /data/gps
     chmod 770 /data/gps
+    chown system system /sys/module/cpu_tegra/parameters/gps_start
+    chmod 600 /sys/module/cpu_tegra/parameters/gps_start
 
 # Wiimote connect status
     write /data/misc/wminput/connected 0
@@ -172,15 +176,16 @@ on boot
     write /sys/class/gpio/export 162
     write /sys/class/gpio/gpio162/value 0
     write /sys/class/gpio/gpio162/direction out
+    write /sys/module/cpu_tegra/parameters/gps_start 1
     chown root system /sys/class/gpio/gpio162/value
     chmod 0664 /sys/class/gpio/gpio162/value
 
 # ril
-    mkdir /data/modem 0770 radio system
-    chown radio system /sys/devices/virtual/ril/files/prox_onoff
-    chown radio system /sys/devices/platform/baseband_xmm_power/xmm_nml_reset
-    chown radio system /sys/devices/virtual/ril/files/crash_dump_onoff
-    chmod 0660 /sys/devices/virtual/ril/files/crash_dump_onoff
+#    mkdir /data/modem 0770 radio system
+#    chown radio system /sys/devices/virtual/ril/files/prox_onoff
+#    chown radio system /sys/devices/platform/baseband_xmm_power/xmm_nml_reset
+#    chown radio system /sys/devices/virtual/ril/files/crash_dump_onoff
+#    chmod 0660 /sys/devices/virtual/ril/files/crash_dump_onoff
 
 # NTFS and exFAT support
     insmod /sbin/tntfs.ko
@@ -318,10 +323,8 @@ service hciattach /system/bin/brcm_patchram_plus --enable_hci --scopcm=0,2,0,0,0
   on boot
   service gps-daemon /system/bin/glgps -c /system/etc/gps/gpsconfig.xml
   user root
-  socket gps seqpacket 0666 root root
   group root
   class late_start
-
 
 # Mount usb drives as /usbdrive. Generally usb drives are formatted with FAT
 # filesystem, so we support FAT as of now.
@@ -404,22 +407,6 @@ on property:ril.testmode=0
     stop ril-daemon-test
     start ril-daemon
 
-#insmod bcmdhd driver for BCM4330/BCM4334
-#on property:wifi.module.type=0
-#    insmod /system/lib/modules/bcmdhd.ko
-
-#on property:wifi.module.type=2
-#    insmod /system/lib/modules/bcmdhd.ko
-
-#on property:wifi.module.type=4
-#    insmod /system/lib/modules/bcmdhd.ko
-
-#on property:wifi.module.type=5
-#    insmod /system/lib/modules/bcmdhd_34.ko
-
-#on property:wifi.module.type=6
-#    insmod /system/lib/modules/bcmdhd_34.ko
-
 # End of testmode patches.
 
 #Touch
@@ -429,10 +416,10 @@ service touch_update /system/bin/touch_fw_update --default
     disabled
     oneshot
 
-on property:init.svc.sensors-config=stopped
-    chmod 644 /data/sensors/AMI304_Config.ini
-    chown system system /data/sensors/AMI304_Config.ini
-    chmod 644 /data/sensors/KXTF9_Calibration.ini
-    chown system system /data/sensors/KXTF9_Calibration.ini
-    chmod 644 /data/lightsensor/AL3010_Config.ini
-    chown system system /data/lightsensor/AL3010_Config.ini
+#on property:init.svc.sensors-config=stopped
+#    chmod 644 /data/sensors/AMI304_Config.ini
+#    chown system system /data/sensors/AMI304_Config.ini
+#    chmod 644 /data/sensors/KXTF9_Calibration.ini
+#    chown system system /data/sensors/KXTF9_Calibration.ini
+#    chmod 644 /data/lightsensor/AL3010_Config.ini
+#    chown system system /data/lightsensor/AL3010_Config.ini
