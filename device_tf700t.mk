@@ -58,20 +58,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/cpu.sh:system/bin/cpu.sh \
     $(LOCAL_PATH)/prebuilt/vold.fstab:system/etc/vold.fstab \
-    $(LOCAL_PATH)/prebuilt/gpsconfig.xml:system/etc/gps/gpsconfig.xml \
-    $(LOCAL_PATH)/prebuilt/gpsconfig.xml:system/etc/gps/glconfig.xml
-
-# Prebuilt binaires
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/gps.sh:system/bin/gps.sh \
-    $(LOCAL_PATH)/prebuilt/bin/rild:system/bin/rild \
-    $(LOCAL_PATH)/prebuilt/bin/brcm_patchram_plus:system/bin/brcm_patchram_plus \
-    $(LOCAL_PATH)/prebuilt/bin/wifimacwriter:system/bin/wifimacwriter \
-    $(LOCAL_PATH)/prebuilt/bin/touch_fw_update:system/bin/touch_fw_update
-
-# Prebuilt apks
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/app/FixPortrait.apk:system/app/FixPortrait.apk
+    $(LOCAL_PATH)/prebuilt/gpsconfig.xml:system/etc/gps/gpsconfig.xml
 
 # Input device configuration files
 PRODUCT_COPY_FILES += \
@@ -89,40 +76,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
     $(LOCAL_PATH)/prebuilt/tegra-kbc.kl:system/usr/keylayout/tegra-kbc.kl
 
-# Camera/WiFi/BT Firmware
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/nvram.txt:system/etc/nvram_4329.txt \
-    $(LOCAL_PATH)/prebuilt/firmware/nvram_4330.txt:system/etc/nvram_4330.txt \
-    $(LOCAL_PATH)/prebuilt/firmware/nvram_murata.txt:system/etc/nvram_murata.txt \
-    $(LOCAL_PATH)/prebuilt/firmware/nvram_nh615.txt:system/etc/nvram_nh615.txt \
-    $(LOCAL_PATH)/prebuilt/firmware/nvram_nh660.txt:system/etc/nvram_nh660.txt \
-    $(LOCAL_PATH)/prebuilt/firmware/nvram_nh665.txt:system/etc/nvram_nh665.txt \
-    $(LOCAL_PATH)/prebuilt/firmware/nvram_nh669.txt:system/etc/nvram_nh669.txt \
-    $(LOCAL_PATH)/prebuilt/firmware/BCM4329B1_002.002.023.0797.0863.hcd:system/etc/firmware/BCM4329B1_002.002.023.0797.0863.hcd \
-    $(LOCAL_PATH)/prebuilt/firmware/BCM4329B1_002.002.023.0797.0879.hcd:system/etc/firmware/BCM4329B1_002.002.023.0797.0879.hcd \
-    $(LOCAL_PATH)/prebuilt/firmware/BCM4330B1_002.001.003.0379.0390.hcd:system/etc/firmware/BCM4330B1_002.001.003.0379.0390.hcd \
-    $(LOCAL_PATH)/prebuilt/firmware/BCM4330B1_002.001.003.0609.0636.hcd:system/etc/firmware/BCM4330B1_002.001.003.0609.0636.hcd \
-    $(LOCAL_PATH)/prebuilt/firmware/BCM4330B1_002.001.003.0750.0820.hcd:system/etc/firmware/BCM4330B1_002.001.003.0750.0820.hcd \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4329.hcd:system/etc/firmware/bcm4329.hcd \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4330.hcd:system/etc/firmware/bcm4330.hcd \
-    $(LOCAL_PATH)/prebuilt/firmware/fw_bcm4329_apsta.bin:system/vendor/firmware/fw_bcm4329_apsta.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/fw_bcm4329.bin:system/vendor/firmware/fw_bcm4329.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4330/fw_bcmdhd.bin:system/vendor/firmware/bcm4330/fw_bcmdhd.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4330/fw_bcmdhd_b1.bin:system/vendor/firmware/bcm4330/fw_bcmdhd_b1.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4330/fw_bcmdhd_apsta.bin:system/vendor/firmware/bcm4330/fw_bcmdhd_apsta.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4330/fw_bcmdhd_p2p.bin:system/vendor/firmware/bcm4330/fw_bcmdhd_p2p.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4329/fw_bcmdhd.bin:system/vendor/firmware/bcm4329/fw_bcmdhd.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4329/fw_bcmdhd_apsta.bin:system/vendor/firmware/bcm4329/fw_bcmdhd_apsta.bin \
-    $(LOCAL_PATH)/prebuilt/firmware/bcm4329/fw_bcmdhd_p2p.bin:system/vendor/firmware/bcm4329/fw_bcmdhd_p2p.bin
-
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
-    $(LOCAL_PATH)/prebuilt/etc/com.asus.hardware.02.xml:system/etc/permissions/com.asus.hardware.02.xml \
-    $(LOCAL_PATH)/prebuilt/etc/com.asus.hardware.03.xml:system/etc/permissions/com.asus.hardware.03.xml \
-    $(LOCAL_PATH)/prebuilt/etc/com.asus.hardware.04.xml:system/etc/permissions/com.asus.hardware.04.xml \
-    $(LOCAL_PATH)/prebuilt/etc/com.asus.hardware.05.xml:system/etc/permissions/com.asus.hardware.05.xml \
-    $(LOCAL_PATH)/prebuilt/etc/com.asus.hardware.07.xml:system/etc/permissions/com.asus.hardware.07.xml \
     frameworks/native/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
     frameworks/native/data/etc/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
@@ -131,8 +86,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
     frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
-	frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
-    frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
+    frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
     frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
     frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
     frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
@@ -142,6 +96,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml \
     $(LOCAL_PATH)/asusdec/com.cyanogenmod.asusdec.xml:system/etc/permissions/com.cyanogenmod.asusdec.xml
+
 
 # Build characteristics setting
 PRODUCT_CHARACTERISTICS := tablet
