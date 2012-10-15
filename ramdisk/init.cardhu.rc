@@ -14,9 +14,11 @@ on early-init
 
     # make the pathes for the external media mounts
     mkdir /storage/sdcard1 0000 system system
-    mkdir /storage/sdcard2 0000 system system
-    mkdir /storage/usbdisk0 0000 system system
-    mkdir /storage/usbdisk1 0000 system system
+#    mkdir /storage/usbdisk0 0000 system system
+#    mkdir /storage/usbdisk1 0000 system system
+
+#    # create directory for mounting usb drives
+#    mkdir /Removable 0755 media_rw media_rw
 
 on fs
     mount ext4 /dev/block/mmcblk0p1 /system wait rw
@@ -357,6 +359,12 @@ service tf_daemon /system/bin/tf_daemon -storageDir /data/tf -d
 on property:tf.enable=y
     mkdir /data/tf
     start tf_daemon
+
+#PSCtool service start
+#service klogPSC /data/data/com.asus.PSChange/files/klogPSC
+#    user root
+#    group root
+#    disabled
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
