@@ -54,7 +54,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/cpu.sh:system/bin/cpu.sh \
     $(LOCAL_PATH)/prebuilt/vold.fstab:system/etc/vold.fstab \
     $(LOCAL_PATH)/prebuilt/gpsconfig.xml:system/etc/gps/gpsconfig.xml \
-    $(LOCAL_PATH)/prebuilt/gps.sh:system/bin/gps.sh
+    $(LOCAL_PATH)/prebuilt/mixer_paths.xml:system/etc/mixer_paths.xml \
+    $(LOCAL_PATH)/prebuilt/audio_policy.conf:system/etc/audio_policy.conf
 
 # Input device configuration files
 PRODUCT_COPY_FILES += \
@@ -101,8 +102,8 @@ PRODUCT_CHARACTERISTICS := tablet
 PRODUCT_TAGS += dalvik.gc.type-precise
 
 # torch app
-PRODUCT_PACKAGES += \
-	Torch
+#PRODUCT_PACKAGES += \
+#	Torch
 
 # Extra packages to build for this device
 PRODUCT_PACKAGES += \
@@ -110,10 +111,14 @@ PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
     make_ext4fs \
     setup_fs \
+    audio.primary.cardhu \
     audio.a2dp.default \
     audio.usb.default \
     libtinyalsa \
     libaudioutils \
+    tinymix \
+    tinyplay \
+    tinyrec \
     libinvensense_mpl \
     AutoParts_tfp \
     blobpack_tfp \
@@ -146,7 +151,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     com.ti.omap_enhancement=true \
    windowsmgr.max_events_per_sec=300
 
-# Prime spacific overrides
+# Prime specific overrides
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.epad.model=TF700T \
     ro.product.model=TF700T
@@ -163,7 +168,7 @@ $(call inherit-product, frameworks/native/build/tablet-dalvik-heap.mk)
 $(call inherit-product-if-exists, vendor/asus/tf700t/tf700t-vendor.mk)
 
 # Copy bcm4330 firmware
-$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4330/device-bcm.mk)
+# $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4330/device-bcm.mk)
 
 # Device naming
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0

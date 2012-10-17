@@ -14,11 +14,9 @@ on early-init
 
     # make the pathes for the external media mounts
     mkdir /storage/sdcard1 0000 system system
-#    mkdir /storage/usbdisk0 0000 system system
-#    mkdir /storage/usbdisk1 0000 system system
-
-#    # create directory for mounting usb drives
-#    mkdir /Removable 0755 media_rw media_rw
+    mkdir /storage/sdcard2 0000 system system
+    mkdir /storage/usbdisk 0000 system system
+    symlink /storage/usbdisk /mnt/usbdisk
 
 on fs
     mount ext4 /dev/block/mmcblk0p1 /system wait rw
@@ -33,6 +31,7 @@ on post-fs-data
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     mkdir /data/nvcam 0700 media camera
     chown dhcp dhcp /data/misc/dhcp
+
     mkdir /data/misc/wminput 0776 system system
 
     # we will remap this as /mnt/sdcard with the sdcard fuse tool
@@ -96,14 +95,14 @@ on boot
 # Sensor
 #    mkdir /data/sensors 0640 system system
 #    mkdir /data/lightsensor 0640 system system
-    chmod 666 /dev/nvhost-ctrl
-    chmod 666 /dev/nvhost-display
-    chmod 666 /dev/nvhost-dsi
-    chmod 666 /dev/nvhost-gr2d
-    chmod 666 /dev/nvhost-gr3d
-    chmod 666 /dev/nvhost-isp
-    chmod 666 /dev/nvhost-mpe
-    chmod 666 /dev/nvhost-vi
+#    chmod 666 /dev/nvhost-ctrl
+#    chmod 666 /dev/nvhost-display
+#    chmod 666 /dev/nvhost-dsi
+#    chmod 666 /dev/nvhost-gr2d
+#    chmod 666 /dev/nvhost-gr3d
+#    chmod 666 /dev/nvhost-isp
+#    chmod 666 /dev/nvhost-mpe
+#    chmod 666 /dev/nvhost-vi
     chown system system /sys/bus/iio/devices/device0/als_ir_mode
     chown system system /sys/bus/iio/devices/device0/als_enable
     chown system system /sys/bus/iio/devices/device0/als_high_threshold
@@ -118,9 +117,9 @@ on boot
     chmod 777 /sys/devices/platform/tegra-i2c.2/i2c-2/2-000f/delay
 
     # new nodes from linux kernel v3.4
-#    chown system system /sys/bus/iio/devices/iio:device0/als_ir_mode
-#    chown system system /sys/bus/iio/devices/iio:device0/als_enable
-#    chown system system /sys/bus/iio/devices/iio:device0/proximity_enable
+    chown system system /sys/bus/iio/devices/iio:device0/als_ir_mode
+    chown system system /sys/bus/iio/devices/iio:device0/als_enable
+    chown system system /sys/bus/iio/devices/iio:device0/proximity_enable
 #    insmod /system/lib/modules/mpu3050.ko
 #    insmod /system/lib/modules/inv_mpu_kxtf9.ko
 #    insmod /system/lib/modules/inv_mpu_ak8975.ko
@@ -130,16 +129,39 @@ on boot
     write /sys/module/cpu_tegra3/parameters/no_lp 1
     #write /sys/module/tegra3_emc/parameters/emc_enable 0
     #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1000000
+
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor conservative
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor conservative
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor conservative
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor conservative
+
+    write /sys/devices/system/cpu/cpufreq/conservative/up_threshold 95
+    write /sys/devices/system/cpu/cpufreq/conservative/down_threshold 75
+    write /sys/devices/system/cpu/cpufreq/conservative/freq_step 3
+
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
+    write /sys/devices/system/cpu/cpufreq/interactive/input_boost 1
     write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
     write /sys/module/cpu_tegra3/parameters/auto_hotplug 1
     #write /sys/module/cpuidle_t3/parameters/lp2_0_in_idle 0
-    write /sys/module/cpuidle/parameters/lp2_in_idle 1
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/min_sample_input_time
+    write /sys/module/cpuidle/parameters/lp2_in_idle 0
+
+# Interactive governor settings
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/boost_factor
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/max_boost
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+    chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
+
 
 # Display Settings
     write /sys/devices/tegradc.0/smartdimmer/enable 1
@@ -163,22 +185,19 @@ on boot
     write /sys/block/mmcblk0/queue/read_ahead_kb 2048
     write /sys/block/mmcblk1/queue/read_ahead_kb 2048
 
+# Wiimote connect status
+    write /data/misc/wminput/connected 0
+    chmod 0666 /data/misc/wminput/connected
+
 # GPS
     mkdir /data/gps
     chown system system /data/gps
     chmod 770 /data/gps
-    chown system system /sys/module/cpu_tegra/parameters/gps_start
-    chmod 600 /sys/module/cpu_tegra/parameters/gps_start
-
-# Wiimote connect status
-    write /data/misc/wminput/connected 0
-    chmod 0666 /data/misc/wminput/connected
 
 # GPS init
     write /sys/class/gpio/export 162
     write /sys/class/gpio/gpio162/value 0
     write /sys/class/gpio/gpio162/direction out
-    write /sys/module/cpu_tegra/parameters/gps_start 1
     chown root system /sys/class/gpio/gpio162/value
     chmod 0664 /sys/class/gpio/gpio162/value
 
@@ -325,6 +344,7 @@ service hciattach /system/bin/brcm_patchram_plus --enable_hci --scopcm=0,2,0,0,0
   on boot
   service gps-daemon /system/bin/glgps -c /system/etc/gps/gpsconfig.xml
   user root
+  socket gps seqpacket 0666 root root
   group root
   class late_start
 
