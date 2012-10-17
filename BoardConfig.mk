@@ -86,8 +86,8 @@ BOARD_FLASH_BLOCK_SIZE := 4096
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
 # Try to build the kernel
-ARGET_KERNEL_SOURCE := kernel/asus/tf700t
-ARGET_KERNEL_CONFIG := tf700t_bjr_defconfig
+TARGET_KERNEL_SOURCE := kernel/asus/tf700t
+TARGET_KERNEL_CONFIG := tf700t_bjr_defconfig
 
 # Prebuilt Kernel Fallback
 #TARGET_PREBUILT_KERNEL := device/asus/tf700t/prebuilt/kernel
