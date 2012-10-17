@@ -42,7 +42,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.usb.rc:root/init.cardhu.usb.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.cpu.rc:root/init.cardhu.cpu.rc 
-#    $(LOCAL_PATH)/ramdisk/fstab.cardhu:root/fstab.cardhu
+    $(LOCAL_PATH)/ramdisk/fstab.cardhu:root/fstab.cardhu
 
 # Kernel modules
 PRODUCT_COPY_FILES += \
