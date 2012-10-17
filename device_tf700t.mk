@@ -28,11 +28,11 @@ PRODUCT_AAPT_PREF_CONFIG := hdpi
 #PRODUCT_LOCALES += hdpi
 
 # Prebuilt kernel location
-#ifeq ($(TARGET_PREBUILT_KERNEL),)
-#        LOCAL_KERNEL := device/asus/tf700t/prebuilt/kernel
-#else
-#        LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
-#endif
+ifeq ($(TARGET_PREBUILT_KERNEL),)
+        LOCAL_KERNEL := device/asus/tf700t/prebuilt/kernel
+else
+        LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+endif
 
 # Files needed for boot image
 PRODUCT_COPY_FILES += \
@@ -40,7 +40,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/ramdisk/init.cardhu.keyboard.rc:root/init.cardhu.keyboard.rc \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.usb.rc:root/init.cardhu.usb.rc \
-    $(LOCAL_PATH)/ramdisk/init.cardhu.cpu.rc:root/init.cardhu.cpu.rc 
+    $(LOCAL_PATH)/ramdisk/init.cardhu.cpu.rc:root/init.cardhu.cpu.rc \
     $(LOCAL_PATH)/ramdisk/fstab.cardhu:root/fstab.cardhu
 
     #$(LOCAL_KERNEL):kernel \
