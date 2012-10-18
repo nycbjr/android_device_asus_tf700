@@ -1,8 +1,0 @@
-debug
-noauth
-connect "/system/bin/chat -v -f /data/misc/BluetoothDialup"
-usepeerdns
-/dev/rfcomm0 115200
-defaultroute
-crtscts
-lcp-echo-failure 0
