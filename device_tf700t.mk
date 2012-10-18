@@ -128,7 +128,7 @@ PRODUCT_PACKAGES += \
     libasusdec_jni
 
 # Camera
-PRODUCT_PACKAGES := \
+#PRODUCT_PACKAGES := \
     Camera \
     camera.tegra
 
