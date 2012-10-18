@@ -127,6 +127,11 @@ PRODUCT_PACKAGES += \
     com.cyanogenmod.asusdec \
     libasusdec_jni
 
+# Camera
+PRODUCT_PACKAGES := \
+    Camera \
+    camera.tegra
+
 # Propertys spacific for this device
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
