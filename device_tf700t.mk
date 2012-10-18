@@ -125,10 +125,7 @@ PRODUCT_PACKAGES += \
     blobpack_tfp \
     mischelp \
     com.cyanogenmod.asusdec \
-    libasusdec_jni
-
-# Camera
-#PRODUCT_PACKAGES := \
+    libasusdec_jni \
     Camera \
     camera.tegra
 
