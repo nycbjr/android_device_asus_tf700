@@ -27,11 +27,12 @@ on post-fs-data
     mkdir /data/misc/wifi 0770 wifi wifi
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
+    mkdir /data/nvcam 0700 media camera
     chown dhcp dhcp /data/misc/dhcp
 
     mkdir /data/misc/wminput 0776 system system
 
-    # we will remap this as /mnt/sdcard with the sdcard fuse tool
+    # we will remap this as /storage/sdcard0 with the sdcard fuse tool
     mkdir /data/media 0770 media_rw media_rw
     chown media_rw media_rw /data/media
 
@@ -226,7 +227,6 @@ service wpa_supplicant2 /system/bin/wpa_supplicant \
     socket wpa_wlan0 dgram 660 wifi wifi
     disabled
     oneshot
-    oneshot
 
 service dhcpcd_wlan0 /system/bin/dhcpcd -aABKL
     class main
@@ -295,12 +295,11 @@ service iprenew_rmnet1 /system/bin/dhcpcd -n
     oneshot
 # Sensor load calibration files end
 
-# create virtual SD card at /mnt/sdcard, based on the /data/media directory
+# create virtual SD card at /storage/sdcard0, based on the /data/media directory
 # deamon will drop to user/group system/media_rw after initializing
 # underlying files in /data/media wil be created with user and group media_rw (1023)
 service sdcard /system/bin/sdcard /data/media 1023 1023
-    class main
-    oneshot
+    class late_start
 
 # bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
 service bugreport /system/bin/dumpstate -d -v -o /data/storage/bugreports/bugreport
@@ -343,18 +342,15 @@ service mischelp /system/bin/mischelp /dev/block/platform/sdhci-tegra.3/by-name/
 on property:sys.shutdown.requested=1recovery
     start mischelp
 
-# Prepare TF service
+# start tf_daemon service
 service tf_daemon /system/bin/tf_daemon -storageDir /data/tf -d
-    disabled
     class main
     user root
     group shell
-    oneshot
 
-# Create data directory and start service
-on property:tf.enable=y
+# may restart due to /data/tf not existing yet
+on property:init.svc.tf_daemon=restarting
     mkdir /data/tf
-    start tf_daemon
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
@@ -408,20 +404,20 @@ on property:ril.testmode=0
 # End of testmode patches.
 
 # insmod bcmdhd driver for BCM4330/BCM4334
-on property:wifi.module.type=0
-    insmod /system/lib/modules/bcmdhd.ko
+#on property:wifi.module.type=0
+#    insmod /system/lib/modules/bcmdhd.ko
 
-on property:wifi.module.type=2
-    insmod /system/lib/modules/bcmdhd.ko
+#on property:wifi.module.type=2
+#    insmod /system/lib/modules/bcmdhd.ko
 
-on property:wifi.module.type=4
-    insmod /system/lib/modules/bcmdhd.ko
+#on property:wifi.module.type=4
+#    insmod /system/lib/modules/bcmdhd.ko
 
-on property:wifi.module.type=5
-    insmod /system/lib/modules/bcmdhd_34.ko
+#on property:wifi.module.type=5
+#    insmod /system/lib/modules/bcmdhd_34.ko
 
-on property:wifi.module.type=6
-    insmod /system/lib/modules/bcmdhd_34.ko
+#on property:wifi.module.type=6
+#    insmod /system/lib/modules/bcmdhd_34.ko
 
 # Blutooth DUN support
 service BtService /system/bin/sh /system/etc/BtService.sh
