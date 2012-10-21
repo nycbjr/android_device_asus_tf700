@@ -14,8 +14,11 @@
 # limitations under the License.
 #
 
+USE_PROPRIETARY_AUDIO_EXTENSIONS := true
 BOARD_USES_GENERIC_AUDIO := false
 USE_CAMERA_STUB := false
+BOARD_USES_ALSA_AUDIO := false
+BOARD_USES_TINY_AUDIO_HW := true
 
 # inherit from the proprietary version
 -include vendor/asus/tf700t/BoardConfigVendor.mk
