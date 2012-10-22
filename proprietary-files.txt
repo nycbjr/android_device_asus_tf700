@@ -79,6 +79,8 @@ lib/hw/lights.cardhu.so
 lib/hw/sensors_generic.cardhu.so
 lib/hw/sensors.cardhu.so
 lib/hw/sensors6050.cardhu.so
+lib/texfat.ko
+lib/tntfat.ko
 lib/libami_sensor_mw.so
 lib/libami.so
 lib/libardrv_dynamic.so

@@ -23,8 +23,10 @@ DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
 
 
 # This device is hdpi.
-PRODUCT_AAPT_CONFIG := xlarge hdpi mdpi
-PRODUCT_AAPT_PREF_CONFIG := hdpi
+#PRODUCT_AAPT_CONFIG := xlarge hdpi mdpi
+#PRODUCT_AAPT_PREF_CONFIG := hdpi
+PRODUCT_AAPT_CONFIG := normal large xlarge hdpi
+PRODUCT_AAPT_PREF_CONFIG := xlarge hdpi
 #PRODUCT_LOCALES += hdpi
 
 # Prebuilt kernel location
@@ -111,14 +113,10 @@ PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
     make_ext4fs \
     setup_fs \
-    audio.primary.cardhu \
     audio.a2dp.default \
     audio.usb.default \
     libtinyalsa \
     libaudioutils \
-    tinymix \
-    tinyplay \
-    tinyrec \
     libinvensense_mpl \
     AutoParts_tfp \
     blobpack_tfp \
@@ -164,7 +162,8 @@ PRODUCT_COPY_FILES += \
     device/asus/tf700t/media_profiles.xml:system/etc/media_profiles.xml
 
 # Inherit tablet dalvik settings
-$(call inherit-product, frameworks/native/build/tablet-dalvik-heap.mk)
+#$(call inherit-product, frameworks/native/build/tablet-dalvik-heap.mk)
+$(call inherit-product, frameworks/native/build/tablet-7in-hdpi-1024-dalvik-heap.mk)
 
 # Call the vendor to setup propiatory files
 $(call inherit-product-if-exists, vendor/asus/tf700t/tf700t-vendor.mk)

@@ -8,7 +8,7 @@ on early-init
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
     mkdir /storage 0050 system sdcard_r
-    mkdir /storage/sdcard0 0777 system system
+    mkdir /storage/sdcard0 0000 system system
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard0 /mnt/sdcard
 
@@ -175,8 +175,8 @@ on boot
     chmod 0664 /sys/class/gpio/gpio162/value
 
 # NTFS and exFAT support
-    insmod /sbin/tntfs.ko
-    insmod /sbin/texfat.ko
+    insmod /system/lib/tntfs.ko
+    insmod /system/lib/texfat.ko
 
 # insmod cfg80211.ko for cfg80211 and P2P mode.
 #    insmod /system/lib/modules/cfg80211.ko
