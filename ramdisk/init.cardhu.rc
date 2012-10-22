@@ -7,8 +7,8 @@ on early-init
 # for backwards compatibility
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
-    mkdir /storage 0550 system sdcard_r
-    mkdir /storage/sdcard0 0000 system system
+    mkdir /storage 0050 system sdcard_r
+    mkdir /storage/sdcard0 0777 system system
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard0 /mnt/sdcard
 
