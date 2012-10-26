@@ -23,8 +23,6 @@ DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
 
 
 # This device is hdpi.
-#PRODUCT_AAPT_CONFIG := xlarge hdpi mdpi
-#PRODUCT_AAPT_PREF_CONFIG := hdpi
 PRODUCT_AAPT_CONFIG := normal large xlarge hdpi
 PRODUCT_AAPT_PREF_CONFIG := xlarge hdpi
 #PRODUCT_LOCALES += hdpi
@@ -134,12 +132,12 @@ PRODUCT_PROPERTY_OVERRIDES := \
     persist.sys.usb.config=mtp,adb
 
 # Tegra 3 spacific overrides
-PRODUCT_PROPERTY_OVERRIDES += \
+#PRODUCT_PROPERTY_OVERRIDES += \
     persist.tegra.nvmmlite=1 \
     persist.sys.NV_FPSLIMIT=60
 
 # UI
-PRODUCT_PROPERTY_OVERRIDES += \
+#PRODUCT_PROPERTY_OVERRIDES += \
     debug.performance.tuning=1 \
     video.accelerate.hw=1 \
     ro.kernel.android.checkjni=0 \
@@ -152,7 +150,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
    windowsmgr.max_events_per_sec=300
 
 # Prime specific overrides
-PRODUCT_PROPERTY_OVERRIDES += \
+#PRODUCT_PROPERTY_OVERRIDES += \
     ro.epad.model=TF700T \
     ro.product.model=TF700T
 
