@@ -95,8 +95,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/asusdec/com.cyanogenmod.asusdec.xml:system/etc/permissions/com.cyanogenmod.asusdec.xml
 
 # Use Stock Camera App
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/app/Gallery2.apk:system/app/Gallery2.apk \
+#PRODUCT_COPY_FILES += \
+#    $(LOCAL_PATH)/prebuilt/app/Gallery2.apk:system/app/Gallery2.apk \
 
 # Build characteristics setting
 PRODUCT_CHARACTERISTICS := tablet
