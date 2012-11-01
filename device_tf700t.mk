@@ -23,9 +23,9 @@ DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
 
 
 # This device is hdpi.
+PRODUCT_CHARACTERISTICS := tablet
 PRODUCT_AAPT_CONFIG := normal large xlarge hdpi
 PRODUCT_AAPT_PREF_CONFIG := xlarge hdpi
-#PRODUCT_LOCALES += hdpi
 
 # Prebuilt kernel location
 ifeq ($(TARGET_PREBUILT_KERNEL),)
@@ -37,7 +37,6 @@ endif
 # Files needed for boot image
 PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel \
-    $(LOCAL_PATH)/ramdisk/init.rc:root/init.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.rc:root/init.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.keyboard.rc:root/init.cardhu.keyboard.rc \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
@@ -52,10 +51,10 @@ PRODUCT_COPY_FILES += \
 
 # Prebuilt configuration files
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/cpu.sh:system/bin/cpu.sh \
     $(LOCAL_PATH)/prebuilt/vold.fstab:system/etc/vold.fstab \
     $(LOCAL_PATH)/prebuilt/gpsconfig.xml:system/etc/gps/gpsconfig.xml \
-    $(LOCAL_PATH)/prebuilt/mixer_paths.xml:system/etc/mixer_paths.xml 
+    $(LOCAL_PATH)/prebuilt/audio_policy.conf:system/etc/audio_policy.conf
+
 
 # Input device configuration files
 PRODUCT_COPY_FILES += \
@@ -94,19 +93,12 @@ PRODUCT_COPY_FILES += \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml \
     $(LOCAL_PATH)/asusdec/com.cyanogenmod.asusdec.xml:system/etc/permissions/com.cyanogenmod.asusdec.xml
 
-# Use Stock Camera App
-#PRODUCT_COPY_FILES += \
-#    $(LOCAL_PATH)/prebuilt/app/Gallery2.apk:system/app/Gallery2.apk \
-
-# Build characteristics setting
-PRODUCT_CHARACTERISTICS := tablet
-
 # This device have enough room for precise davick
 PRODUCT_TAGS += dalvik.gc.type-precise
 
 # torch app
-#PRODUCT_PACKAGES += \
-#	Torch
+PRODUCT_PACKAGES += \
+	Torch
 
 # Extra packages to build for this device
 PRODUCT_PACKAGES += \
@@ -123,9 +115,7 @@ PRODUCT_PACKAGES += \
     blobpack_tfp \
     mischelp \
     com.cyanogenmod.asusdec \
-    libasusdec_jni \
-    Camera \
-    camera.tegra
+    libasusdec_jni 
 
 # Propertys spacific for this device
 PRODUCT_PROPERTY_OVERRIDES := \
