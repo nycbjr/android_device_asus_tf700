@@ -12,20 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Inherit common language setup
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
-# The gps config appropriate for this device
-$(call inherit-product, device/common/gps/gps_us_supl.mk)
-
+# Inherit tf700t vendor setup
 $(call inherit-product-if-exists, vendor/asus/tf700t/tf700t-vendor.mk)
 
+# Path to overlay files
 DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
-
-
-# This device is hdpi.
-PRODUCT_CHARACTERISTICS := tablet
-PRODUCT_AAPT_CONFIG := normal large xlarge hdpi
-PRODUCT_AAPT_PREF_CONFIG := xlarge hdpi
 
 # Prebuilt kernel location
 ifeq ($(TARGET_PREBUILT_KERNEL),)
@@ -42,19 +36,19 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.usb.rc:root/init.cardhu.usb.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.cpu.rc:root/init.cardhu.cpu.rc \
-    $(LOCAL_PATH)/ramdisk/fstab.cardhu:root/fstab.cardhu
-
-# Kernel modules
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/lib/baseband_usb_chr.ko:system/lib/modules/baseband_usb_chr.ko \
-    $(LOCAL_PATH)/prebuilt/lib/raw_ip_net.ko:system/lib/modules/raw_ip_net.ko 
+    $(LOCAL_PATH)/prebuilt/fstab.cardhu:root/fstab.cardhu
 
 # Prebuilt configuration files
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/vold.fstab:system/etc/vold.fstab \
     $(LOCAL_PATH)/prebuilt/gpsconfig.xml:system/etc/gps/gpsconfig.xml \
+    $(LOCAL_PATH)/prebuilt/mixer_paths.xml:system/etc/mixer_paths.xml \
     $(LOCAL_PATH)/prebuilt/audio_policy.conf:system/etc/audio_policy.conf
 
+# Temp prebuild bins
+PRODUCT_COPY_FILES += \
+    vendor/extras/xbin/su:system/xbin/su \
+    vendor/extras/xbin/busybox:system/xbin/busybox 
 
 # Input device configuration files
 PRODUCT_COPY_FILES += \
@@ -67,8 +61,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/idc/raydium_ts.idc:system/usr/idc/raydium_ts.idc \
     $(LOCAL_PATH)/idc/sis_touch.idc:system/usr/idc/sis_touch.idc \
     $(LOCAL_PATH)/idc/Vendor_0457_Product_0817.idc:system/usr/idc/Vendor_0457_Product_0817.idc \
-    $(LOCAL_PATH)/prebuilt/asusdec.kcm:system/usr/keychars/asusdec.kcm \
-    $(LOCAL_PATH)/prebuilt/asusdec.kl:system/usr/keylayout/asusdec.kl \
     $(LOCAL_PATH)/prebuilt/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
     $(LOCAL_PATH)/prebuilt/tegra-kbc.kl:system/usr/keylayout/tegra-kbc.kl
 
@@ -91,14 +83,14 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml \
-    $(LOCAL_PATH)/asusdec/com.cyanogenmod.asusdec.xml:system/etc/permissions/com.cyanogenmod.asusdec.xml
 
-# This device have enough room for precise davick
+# Build characteristics setting 
+PRODUCT_CHARACTERISTICS := tablet
+PRODUCT_AAPT_CONFIG := normal large xlarge hdpi
+PRODUCT_AAPT_PREF_CONFIG := xlarge hdpi
+
+# This device has enough space for precise dalvik
 PRODUCT_TAGS += dalvik.gc.type-precise
-
-# torch app
-PRODUCT_PACKAGES += \
-	Torch
 
 # Extra packages to build for this device
 PRODUCT_PACKAGES += \
@@ -113,59 +105,34 @@ PRODUCT_PACKAGES += \
     libinvensense_mpl \
     AutoParts_tfp \
     blobpack_tfp \
-    mischelp \
-    com.cyanogenmod.asusdec \
-    libasusdec_jni 
+    wifimacwriter \
+    mischelp 
 
-# Propertys spacific for this device
+# Torch
+PRODUCT_PACKAGES += \
+    Torch
+
+# Infinity specific properties
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=15 \
     ro.opengles.version=131072 \
     persist.sys.usb.config=mtp,adb
 
-# Tegra 3 spacific overrides
-#PRODUCT_PROPERTY_OVERRIDES += \
-    persist.tegra.nvmmlite=1 \
-    persist.sys.NV_FPSLIMIT=60
-
-# UI
-#PRODUCT_PROPERTY_OVERRIDES += \
-    debug.performance.tuning=1 \
-    video.accelerate.hw=1 \
-    ro.kernel.android.checkjni=0 \
-    ro.kernel.checkjni=0 \
-    ro.mot.eri.losalert.delay=1000 \
-    persist.sys.strictmode.visual=0 \
-    persist.sys.strictmode.disable=1 \
-    dalvik.vm.execution-mode=int:jit \
-    com.ti.omap_enhancement=true \
-   windowsmgr.max_events_per_sec=300
-
-# Prime specific overrides
-#PRODUCT_PROPERTY_OVERRIDES += \
-    ro.epad.model=TF700T \
-    ro.product.model=TF700T
-
 # media files
 PRODUCT_COPY_FILES += \
     device/asus/tf700t/media_codecs.xml:system/etc/media_codecs.xml \
     device/asus/tf700t/media_profiles.xml:system/etc/media_profiles.xml
 
+# GPS configuration
+PRODUCT_COPY_FILES += \
+    device/asus/tf700t/configs/gps.conf:system/etc/gps.conf
+
 # Inherit tablet dalvik settings
-#$(call inherit-product, frameworks/native/build/tablet-dalvik-heap.mk)
 $(call inherit-product, frameworks/native/build/tablet-7in-hdpi-1024-dalvik-heap.mk)
 
-# Call the vendor to setup propiatory files
-$(call inherit-product-if-exists, vendor/asus/tf700t/tf700t-vendor.mk)
-
-# Copy bcm4330 firmware
-# $(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4330/device-bcm.mk)
-
-# Device naming
-PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
+# Device Naming
 PRODUCT_NAME := full_tf700t
 PRODUCT_DEVICE := tf700t
-PRODUCT_MODEL := tf700t
 PRODUCT_BRAND := asus
-PRODUCT_MANUFACTURER := asus
+PRODUCT_MODEL := ASUS Transformer Pad TF700T

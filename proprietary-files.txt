@@ -71,11 +71,12 @@ lib/egl/libGLESv2_perfhud.so
 lib/egl/libGLESv2_tegra_impl.so
 lib/egl/libGLESv2_tegra.so
 lib/hw/audio.primary.tegra.so
+lib/hw/audio.primary.cardhu.so
 lib/hw/audio_policy.tegra.so
 lib/hw/camera.tegra.so
 lib/hw/gps.tegra.so
-lib/hw/gralloc.tegra.so
-lib/hw/hwcomposer.tegra.so
+lib/hw/gralloc.tegra3.so
+lib/hw/hwcomposer.tegra3.so
 lib/hw/lights.cardhu.so
 lib/hw/sensors6050.cardhu.so
 lib/hw/sensors.cardhu.so
@@ -202,3 +203,7 @@ vendor/firmware/bcm4330/fw_bcmdhd_apsta.bin
 vendor/firmware/bcm4330/fw_bcmdhd_b1.bin
 vendor/firmware/bcm4330/fw_bcmdhd.bin
 vendor/firmware/bcm4330/fw_bcmdhd_p2p.bin
+vendor/lib/libWVStreamControlAPI_L3.so
+vendor/lib/libwvdrm_L3.so
+vendor/lib/libwvm.so
+vendor/lib/drm/libdrmwvmplugin.so

@@ -4,19 +4,20 @@ import init.cardhu.cpu.rc
 on early-init
     mount debugfs debugfs /sys/kernel/debug
 
-# for backwards compatibility
-    export EXTERNAL_STORAGE /storage/sdcard0
-    export SECONDARY_STORAGE /storage/sdcard1
-    mkdir /storage 0550 system sdcard_r
-    mkdir /storage/sdcard0 0000 system system
-    symlink /storage/sdcard0 /sdcard
-    symlink /storage/sdcard0 /mnt/sdcard
+on init
+    # See storage config details at http://source.android.com/tech/storage/
+    mkdir /mnt/shell/emulated 0700 shell shell
+    mkdir /storage/emulated 0555 root root
 
-    # make the pathes for the external media mounts
-    mkdir /storage/sdcard1 0000 system system
-    mkdir /storage/sdcard2 0000 system system
-    mkdir /storage/usbdisk0 0000 system system
-    mkdir /storage/usbdisk1 0000 system system
+    export EXTERNAL_STORAGE /storage/emulated/legacy
+    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
+    export EMULATED_STORAGE_TARGET /storage/emulated
+
+    # Support legacy paths
+    symlink /storage/emulated/legacy /sdcard
+    symlink /storage/emulated/legacy /mnt/sdcard
+    symlink /storage/emulated/legacy /storage/sdcard0
+    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
 on fs
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
@@ -58,10 +59,10 @@ on boot
     chown system system /sys/class/graphics/fb0/device/smartdimmer/enable
     chown system system /sys/class/graphics/fb0/device/smartdimmer/aggressiveness
     chown system system /sys/class/graphics/fb0/device/smartdimmer/phase_in_adjustments
-#    chown system system /sys/devices/tegradc.0/smartdimmer/enable
-#    chown system system /sys/devices/tegradc.0/smartdimmer/aggressiveness
-#    chown system system /sys/devices/tegradc.0/smartdimmer/phase_in_adjustments
-#    chown system system /sys/devices/tegradc.0/smartdimmer/bin_width
+    chown system system /sys/devices/tegradc.0/smartdimmer/enable
+    chown system system /sys/devices/tegradc.0/smartdimmer/aggressiveness
+    chown system system /sys/devices/tegradc.0/smartdimmer/phase_in_adjustments
+    chown system system /sys/devices/tegradc.0/smartdimmer/bin_width
 
 # power
     chown system system /sys/kernel/tegra_cap/core_cap_level
@@ -146,12 +147,13 @@ on boot
 # We dont want to swap keys unless needed
     setprop sys.dockkeys.change 0
 
-on property:ro.debuggable=
-# Touchscreen Config-UI interface
-	chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/mem_access
-	chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/debug_enable
-	chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/pause_driver
-	chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/slowscan_enable
+on property:ro.debuggable=1
+	
+# Touchscreen Config-UI interface	
+chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/mem_access
+chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/debug_enable	
+chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/pause_driver
+chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/slowscan_enable
 
 # Fuse
     chmod 444 /sys/firmware/fuse/odm_production_mode
@@ -297,10 +299,8 @@ service iprenew_rmnet1 /system/bin/dhcpcd -n
     oneshot
 # Sensor load calibration files end
 
-# create virtual SD card at /storage/sdcard0, based on the /data/media directory
-# deamon will drop to user/group system/media_rw after initializing
-# underlying files in /data/media wil be created with user and group media_rw (1023)
-service sdcard /system/bin/sdcard /data/media 1023 1023
+# virtual sdcard daemon running as media_rw (1023)
+service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
     class late_start
 
 # bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
@@ -346,16 +346,13 @@ on property:sys.shutdown.requested=1recovery
 
 # start tf_daemon service
 service tf_daemon /system/bin/tf_daemon -storageDir /data/tf -d
-    disabled
     class main
     user root
     group shell
-    oneshot
 
-# Create data directory and start service
-on property:tf.enable=y
+# may restart due to /data/tf not existing yet
+on property:init.svc.tf_daemon=restarting
     mkdir /data/tf
-    start tf_daemon
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
