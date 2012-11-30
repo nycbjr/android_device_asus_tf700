@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# Default value, if not overridden else where.
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR ?= device/asus/tf700t/bluetooth
+
 USE_PROPRIETARY_AUDIO_EXTENSIONS := true
 BOARD_USES_GENERIC_AUDIO := false
 USE_CAMERA_STUB := false
@@ -27,7 +30,8 @@ DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
 # Board naming
 TARGET_NO_RADIOIMAGE := true
-TARGET_BOARD_PLATFORM := tegra
+TARGET_BOARD_PLATFORM := tegra3
+TARGET_TEGRA_VERSION := t30
 TARGET_BOOTLOADER_BOARD_NAME := cardhu
 
 #ICS Camera HAL
@@ -60,8 +64,8 @@ BOARD_USE_SKIA_LCDTEXT := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 
 # Bluetooth
-BOARD_HAVE_BLUETOOTH := true
-BOARD_HAVE_BLUETOOTH_BCM := true
+#BOARD_HAVE_BLUETOOTH := true
+#BOARD_HAVE_BLUETOOTH_BCM := true
 
 # Support for dock battery
 TARGET_HAS_DOCK_BATTERY := true
