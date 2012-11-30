@@ -31,7 +31,6 @@ endif
 # Files needed for boot image
 PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel \
-    $(LOCAL_PATH)/ramdisk/init.rc:root/init.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.rc:root/init.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.keyboard.rc:root/init.cardhu.keyboard.rc \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
@@ -48,7 +47,6 @@ PRODUCT_COPY_FILES += \
 
 # Temp prebuild bins
 PRODUCT_COPY_FILES += \
-    vendor/extras/xbin/remount:system/xbin/remount \
     vendor/extras/xbin/su:system/xbin/su \
     vendor/extras/xbin/busybox:system/xbin/busybox 
 
@@ -104,9 +102,6 @@ PRODUCT_PACKAGES += \
     audio.usb.default \
     libtinyalsa \
     libaudioutils \
-    tinymix \
-    tinyplay \
-    tinyrec \
     libinvensense_mpl \
     AutoParts_tfp \
     blobpack_tfp \
@@ -114,8 +109,8 @@ PRODUCT_PACKAGES += \
     mischelp 
 
 # Torch
-#PRODUCT_PACKAGES += \
-#    Torch
+PRODUCT_PACKAGES += \
+    Torch
 
 # Infinity specific properties
 PRODUCT_PROPERTY_OVERRIDES := \

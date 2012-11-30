@@ -44,7 +44,7 @@
 #define PCM_DEVICE 0
 #define PCM_DEVICE_SCO 2
 
-#define OUT_PERIOD_SIZE 512
+#define OUT_PERIOD_SIZE 1024
 #define OUT_SHORT_PERIOD_COUNT 2
 #define OUT_LONG_PERIOD_COUNT 8
 #define OUT_SAMPLING_RATE 44100
@@ -53,9 +53,9 @@
 #define IN_PERIOD_COUNT 4
 #define IN_SAMPLING_RATE 44100
 
-#define SCO_PERIOD_SIZE 256
+#define SCO_PERIOD_SIZE 1024
 #define SCO_PERIOD_COUNT 4
-#define SCO_SAMPLING_RATE 8000
+#define SCO_SAMPLING_RATE 44100
 
 /* minimum sleep time in out_write() when write threshold is not reached */
 #define MIN_WRITE_SLEEP_US 2000
@@ -332,14 +332,13 @@ static int start_output_stream(struct stream_out *out)
      * the most common rate, but group 2 is required for SCO.
      */
     if (adev->active_in) {
-        struct stream_in *in = adev->active_in;
-        pthread_mutex_lock(&in->lock);
+        pthread_mutex_lock(&adev->active_in->lock);
         if (((out->pcm_config->rate % 8000 == 0) &&
-                 (in->pcm_config->rate % 8000) != 0) ||
+                 (adev->active_in->pcm_config->rate % 8000) != 0) ||
                  ((out->pcm_config->rate % 11025 == 0) &&
-                 (in->pcm_config->rate % 11025) != 0))
-            do_in_standby(in);
-        pthread_mutex_unlock(&in->lock);
+                 (adev->active_in->pcm_config->rate % 11025) != 0))
+            do_in_standby(adev->active_in);
+        pthread_mutex_unlock(&adev->active_in->lock);
     }
 
     out->pcm = pcm_open(PCM_CARD, device, PCM_OUT | PCM_NORESTART, out->pcm_config);
@@ -400,14 +399,13 @@ static int start_input_stream(struct stream_in *in)
      * the most common rate, but group 2 is required for SCO.
      */
     if (adev->active_out) {
-        struct stream_out *out = adev->active_out;
-        pthread_mutex_lock(&out->lock);
+        pthread_mutex_lock(&adev->active_out->lock);
         if (((in->pcm_config->rate % 8000 == 0) &&
-                 (out->pcm_config->rate % 8000) != 0) ||
+                 (adev->active_out->pcm_config->rate % 8000) != 0) ||
                  ((in->pcm_config->rate % 11025 == 0) &&
-                 (out->pcm_config->rate % 11025) != 0))
-            do_out_standby(out);
-        pthread_mutex_unlock(&out->lock);
+                 (adev->active_out->pcm_config->rate % 11025) != 0))
+            do_out_standby(adev->active_out);
+        pthread_mutex_unlock(&adev->active_out->lock);
     }
 
     in->pcm = pcm_open(PCM_CARD, device, PCM_IN, in->pcm_config);
@@ -436,7 +434,6 @@ static int start_input_stream(struct stream_in *in)
     in->buffer_size = pcm_frames_to_bytes(in->pcm,
                                           in->pcm_config->period_size);
     in->buffer = malloc(in->buffer_size);
-    in->frames_in = 0;
 
     adev->active_in = in;
 
@@ -608,7 +605,7 @@ static int out_set_parameters(struct audio_stream *stream, const char *kvpairs)
     pthread_mutex_lock(&adev->lock);
     if (ret >= 0) {
         val = atoi(value);
-        if ((adev->out_device != val) && (val != 0)) {
+        if (((adev->out_device & AUDIO_DEVICE_OUT_ALL) != val) && (val != 0)) {
             /*
              * If SCO is turned on/off, we need to put audio into standby
              * because SCO uses a different PCM.
@@ -620,7 +617,8 @@ static int out_set_parameters(struct audio_stream *stream, const char *kvpairs)
                 pthread_mutex_unlock(&out->lock);
             }
 
-            adev->out_device = val;
+            adev->out_device &= ~AUDIO_DEVICE_OUT_ALL;
+            adev->out_device |= val;
             select_devices(adev);
         }
     }
@@ -911,8 +909,8 @@ static int in_set_parameters(struct audio_stream *stream, const char *kvpairs)
                             value, sizeof(value));
     pthread_mutex_lock(&adev->lock);
     if (ret >= 0) {
-        val = atoi(value) & ~AUDIO_DEVICE_BIT_IN;
-        if ((adev->in_device != val) && (val != 0)) {
+        val = atoi(value);
+        if (((adev->in_device & AUDIO_DEVICE_IN_ALL) != val) && (val != 0)) {
             /*
              * If SCO is turned on/off, we need to put audio into standby
              * because SCO uses a different PCM.
@@ -924,7 +922,8 @@ static int in_set_parameters(struct audio_stream *stream, const char *kvpairs)
                 pthread_mutex_unlock(&in->lock);
             }
 
-            adev->in_device = val;
+            adev->in_device &= ~AUDIO_DEVICE_IN_ALL;
+            adev->in_device |= val;
             select_devices(adev);
         }
     }
@@ -1338,7 +1337,7 @@ struct audio_module HAL_MODULE_INFO_SYM = {
         .hal_api_version = HARDWARE_HAL_API_VERSION,
         .id = AUDIO_HARDWARE_MODULE_ID,
         .name = "TF700T audio HW HAL",
-        .author = "The Android Open Source Project - updates by Brett Richter",
+        .author = "The Android Open Source Project",
         .methods = &hal_module_methods,
     },
 };
