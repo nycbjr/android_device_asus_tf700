@@ -207,3 +207,4 @@ vendor/lib/libWVStreamControlAPI_L3.so
 vendor/lib/libwvdrm_L3.so
 vendor/lib/libwvm.so
 vendor/lib/drm/libdrmwvmplugin.so
+vendor/lib/libbt-vendor.so

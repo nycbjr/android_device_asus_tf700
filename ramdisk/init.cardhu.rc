@@ -8,19 +8,25 @@ on init
     # See storage config details at http://source.android.com/tech/storage/
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage/emulated 0555 root root
+    mkdir /storage/sdcard1 0000 system system
 
     export EXTERNAL_STORAGE /storage/emulated/legacy
+    export SECONDARY_STORAGE /storage/sdcard1    
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
     export EMULATED_STORAGE_TARGET /storage/emulated
+	
 
     # Support legacy paths
     symlink /storage/emulated/legacy /sdcard
     symlink /storage/emulated/legacy /mnt/sdcard
-    symlink /storage/emulated/legacy /storage/sdcard0
+    symlink /storage/emulated/legacy /storage/sdcard0    
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
+    symlink /storage/sdcard1 /external_sd
+    symlink /storage/sdcard1 /mnt/sdcard1
+
 on fs
-    setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
+#    setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
     setprop ro.crypto.umount_sd false
     mount_all /fstab.cardhu
 
@@ -35,7 +41,9 @@ on post-fs-data
 
     # we will remap this as /storage/sdcard0 with the sdcard fuse tool
     mkdir /data/media 0770 media_rw media_rw
-    chown media_rw media_rw /data/media
+
+    # change back to bluetooth from system
+    chown bluetooth net_bt_stack /data/misc/bluetooth
 
     # Set indication (checked by vold) that we have finished this action
     setprop vold.post_fs_data_done 1
@@ -43,11 +51,32 @@ on post-fs-data
 on boot
 
 # bluetooth
+    # UART device
+    chmod 0660 /dev/ttyHS2
+    chown bluetooth net_bt_stack /dev/ttyHS2
+
     # power up/down interface
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chmod 0660 /sys/class/rfkill/rfkill0/type
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
+
+    # bluetooth MAC address programming
+    chown bluetooth net_bt_stack ro.bt.bdaddr_path
+    chown bluetooth net_bt_stack /system/etc/bluetooth
+    chown bluetooth net_bt_stack /data/misc/bluetooth
+    setprop ro.bt.bdaddr_path "/data/misc/bluetooth/bdaddr"
+
+    # bluetooth LPM
+    chmod 0220 /proc/bluetooth/sleep/lpm
+    chmod 0220 /proc/bluetooth/sleep/btwrite
+    chown bluetooth net_bt_stack /proc/bluetooth/sleep/lpm
+    chown bluetooth net_bt_stack /proc/bluetooth/sleep/btwrite
+
+# NFC
+    setprop ro.nfc.port "I2C"
+    chmod 0660 /dev/pn544
+    chown nfc nfc /dev/pn544
 
 # nvdps
     chown system system /sys/class/graphics/fb0/device/nvdps
@@ -175,8 +204,13 @@ chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/slowscan_enable
     write /sys/class/gpio/export 162
     write /sys/class/gpio/gpio162/value 0
     write /sys/class/gpio/gpio162/direction out
-    chown root system /sys/class/gpio/gpio162/value
+    chown gps system /sys/class/gpio/gpio162/value
     chmod 0664 /sys/class/gpio/gpio162/value
+    mkdir /data/gps
+    chown gps system /data/gps
+    chmod 770 /data/gps
+    chown gps system /dev/ttyHS1
+    chmod 0660 /dev/ttyHS1
 
 # NTFS and exFAT support
     insmod /system/lib/tntfs.ko
@@ -193,8 +227,8 @@ chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/slowscan_enable
 # BB mapping symbolic name to the logging ttyACM port
     symlink /dev/ttyACM2 /dev/log_modem
 
-# Write Wi-Fi Mac
-service wifimacwriter /system/bin/wifimacwriter
+# Write BT BD_ADDR
+service btmacreader /system/bin/btmacreader
     class main
     oneshot
 
@@ -232,7 +266,7 @@ service wpa_supplicant2 /system/bin/wpa_supplicant \
     disabled
     oneshot
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -aABKL
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
     class main
     disabled
     oneshot
@@ -242,7 +276,7 @@ service dhcpcd_p2p /system/bin/dhcpcd -aABKL
     disabled
     oneshot
 
-service dhcpcd_eth0 /system/bin/dhcpcd -ABKL -f/system/etc/dhcpcd/dhcpcd.conf
+service dhcpcd_eth0 /system/bin/dhcpcd -ABDKL -f/system/etc/dhcpcd/dhcpcd.conf
      class main
      disabled
      oneshot
@@ -304,37 +338,29 @@ service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
     class late_start
 
 # bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
-service bugreport /system/bin/dumpstate -d -v -o /data/storage/bugreports/bugreport
+service bugreport /system/bin/bugmailer.sh -b /system/media/audio/ui/Dock.ogg -e /system/media/audio/ui/Undock.ogg
     class main
     disabled
     oneshot
     keycodes 115 114
 
 # BCM hciattach - bt firmware loader
-service hciattach /system/bin/bt_firmware_loader.sh
-    class main
-    user root
-    group system bluetooth net_bt_admin misc
-    disabled
+#service hciattach /system/bin/bt_firmware_loader.sh
+#    class main
+#    user root
+#    group system bluetooth net_bt_admin misc
+#    disabled
 
 # Start GPS daemon
   on boot
   service gps-daemon /system/bin/glgps -c /system/etc/gps/gpsconfig.xml
-  user root
+  user gps
   socket gps seqpacket 0666 root root
-  group root
+  group system
   class late_start
 
-# Mount usb drives as /usbdrive. Generally usb drives are formatted with FAT
-# filesystem, so we support FAT as of now.
-#on device-added-/sys/block/sda
-#  mount vfat /dev/block/sda /mnt/usbdrive
-
-#on device-removed-/sys/block/sda
-#  umount /mnt/usbdrive
-
-# configure MSC partition
-service mischelp /system/bin/mischelp /dev/block/platform/sdhci-tegra.3/by-name/MC boot-recovery
+# Recovery daemon: configure MSC partition
+service recoveryd /system/bin/recoveryd /dev/block/platform/sdhci-tegra.3/by-name/MSC
     disabled
     class main
     user root
@@ -342,7 +368,7 @@ service mischelp /system/bin/mischelp /dev/block/platform/sdhci-tegra.3/by-name/
     oneshot
 
 on property:sys.shutdown.requested=1recovery
-    start mischelp
+    start recoveryd
 
 # start tf_daemon service
 service tf_daemon /system/bin/tf_daemon -storageDir /data/tf -d
