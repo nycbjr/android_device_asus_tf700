@@ -22,6 +22,7 @@ BOARD_USES_GENERIC_AUDIO := false
 USE_CAMERA_STUB := false
 #BOARD_USES_ALSA_AUDIO := false
 #BOARD_USES_TINY_AUDIO_HW := true
+USE_PROPRIETARY_AUDIO_EXTENSIONS := false
 
 # inherit from the proprietary version
 -include vendor/asus/tf700t/BoardConfigVendor.mk
@@ -58,6 +59,12 @@ BOARD_KERNEL_PAGESIZE :=
 # EGL settings
 BOARD_EGL_CFG := device/asus/tf700t/prebuilt/egl.cfg
 USE_OPENGL_RENDERER := true
+
+ifneq ($(HAVE_NVIDIA_PROP_SRC),false)
+# needed for source compilation of nvidia libraries
+-include vendor/nvidia/proprietary_src/build/definitions.mk
+-include vendor/nvidia/build/definitions.mk
+endif
 
 # Misc display settings
 BOARD_USE_SKIA_LCDTEXT := true

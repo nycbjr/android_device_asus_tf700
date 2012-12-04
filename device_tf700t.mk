@@ -31,7 +31,6 @@ endif
 # Files needed for boot image
 PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel \
-    $(LOCAL_PATH)/ramdisk/init.rc:root/init.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.rc:root/init.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.keyboard.rc:root/init.cardhu.keyboard.rc \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
@@ -48,7 +47,6 @@ PRODUCT_COPY_FILES += \
 
 # Temp prebuild bins
 PRODUCT_COPY_FILES += \
-    vendor/extras/xbin/remount:system/xbin/remount \
     vendor/extras/xbin/su:system/xbin/su \
     vendor/extras/xbin/busybox:system/xbin/busybox 
 
@@ -100,31 +98,22 @@ PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
     make_ext4fs \
     setup_fs \
+    power.cardhu \
     audio.a2dp.default \
     audio.usb.default \
+    audio.cardhu.primary \
     libtinyalsa \
     libaudioutils \
-    tinymix \
-    tinyplay \
-    tinyrec \
     libinvensense_mpl \
     AutoParts_tfp \
     blobpack_tfp \
     wifimacwriter \
     mischelp 
-<<<<<<< HEAD
 
 # Torch
 PRODUCT_PACKAGES += \
     Torch
 
-=======
-
-# Torch
-#PRODUCT_PACKAGES += \
-#    Torch
-
->>>>>>> 28739b16ede80ae8125a1c4a75c9ac4cd16c2745
 # Infinity specific properties
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
