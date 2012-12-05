@@ -47,6 +47,7 @@ PRODUCT_COPY_FILES += \
 
 # Temp prebuild bins
 PRODUCT_COPY_FILES += \
+    vendor/extras/remount:system/xbin/remount \
     vendor/extras/xbin/su:system/xbin/su \
     vendor/extras/xbin/busybox:system/xbin/busybox 
 
@@ -101,7 +102,7 @@ PRODUCT_PACKAGES += \
     power.cardhu \
     audio.a2dp.default \
     audio.usb.default \
-    audio.cardhu.primary \
+    audio.primary.cardhu \
     libtinyalsa \
     libaudioutils \
     libinvensense_mpl \
