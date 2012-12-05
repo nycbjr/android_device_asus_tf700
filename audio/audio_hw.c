@@ -436,6 +436,7 @@ static int start_input_stream(struct stream_in *in)
     in->buffer_size = pcm_frames_to_bytes(in->pcm,
                                           in->pcm_config->period_size);
     in->buffer = malloc(in->buffer_size);
+    in->frames_in = 0;
 
     adev->active_in = in;
 
@@ -607,7 +608,7 @@ static int out_set_parameters(struct audio_stream *stream, const char *kvpairs)
     pthread_mutex_lock(&adev->lock);
     if (ret >= 0) {
         val = atoi(value);
-        if (((adev->out_device & AUDIO_DEVICE_OUT_ALL) != val) && (val != 0)) {
+        if ((adev->out_device != val) && (val != 0)) {
             /*
              * If SCO is turned on/off, we need to put audio into standby
              * because SCO uses a different PCM.
@@ -619,8 +620,7 @@ static int out_set_parameters(struct audio_stream *stream, const char *kvpairs)
                 pthread_mutex_unlock(&out->lock);
             }
 
-            adev->out_device &= ~AUDIO_DEVICE_OUT_ALL;
-            adev->out_device |= val;
+            adev->out_device = val;
             select_devices(adev);
         }
     }
@@ -911,8 +911,8 @@ static int in_set_parameters(struct audio_stream *stream, const char *kvpairs)
                             value, sizeof(value));
     pthread_mutex_lock(&adev->lock);
     if (ret >= 0) {
-        val = atoi(value);
-        if (((adev->in_device & AUDIO_DEVICE_IN_ALL) != val) && (val != 0)) {
+        val = atoi(value) & ~AUDIO_DEVICE_BIT_IN;
+        if ((adev->in_device != val) && (val != 0)) {
             /*
              * If SCO is turned on/off, we need to put audio into standby
              * because SCO uses a different PCM.
@@ -924,8 +924,7 @@ static int in_set_parameters(struct audio_stream *stream, const char *kvpairs)
                 pthread_mutex_unlock(&in->lock);
             }
 
-            adev->in_device &= ~AUDIO_DEVICE_IN_ALL;
-            adev->in_device |= val;
+            adev->in_device = val;
             select_devices(adev);
         }
     }
@@ -1321,7 +1320,7 @@ static int adev_open(const hw_module_t* module, const char* name,
     adev->ar = audio_route_init();
     adev->orientation = ORIENTATION_UNDEFINED;
     adev->out_device = AUDIO_DEVICE_OUT_SPEAKER;
-    adev->in_device = AUDIO_DEVICE_IN_BUILTIN_MIC & ~AUDIO_DEVICE_IN_ALL;
+    adev->in_device = AUDIO_DEVICE_IN_BUILTIN_MIC & ~AUDIO_DEVICE_BIT_IN;
 
     *device = &adev->hw_device.common;
 
