@@ -1329,7 +1329,6 @@ static int adev_open(const hw_module_t* module, const char* name,
 
 static struct hw_module_methods_t hal_module_methods = {
     .open = adev_open,
-    select_devices(adev);
 };
 
 struct audio_module HAL_MODULE_INFO_SYM = {
