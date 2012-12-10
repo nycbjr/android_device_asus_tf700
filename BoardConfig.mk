@@ -17,7 +17,7 @@
 # Default value, if not overridden else where.
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR ?= device/asus/tf700t/bluetooth
 
-USE_PROPRIETARY_AUDIO_EXTENSIONS := true
+#USE_PROPRIETARY_AUDIO_EXTENSIONS := true
 BOARD_USES_GENERIC_AUDIO := false
 USE_CAMERA_STUB := false
 #BOARD_USES_ALSA_AUDIO := false
