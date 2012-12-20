@@ -173,16 +173,21 @@ chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/slowscan_enable
     chmod 0666 /data/misc/wminput/connected
 
 # GPS
-    mkdir /data/gps
-    chown system system /data/gps
-    chmod 770 /data/gps
+#    mkdir /data/gps
+#    chown system system /data/gps
+#    chmod 770 /data/gps
 
 # GPS init
     write /sys/class/gpio/export 162
     write /sys/class/gpio/gpio162/value 0
     write /sys/class/gpio/gpio162/direction out
-    chown root system /sys/class/gpio/gpio162/value
+    chown gps system /sys/class/gpio/gpio162/value
     chmod 0664 /sys/class/gpio/gpio162/value
+    mkdir /data/gps
+    chown gps system /data/gps
+    chmod 770 /data/gps
+    chown gps system /dev/ttyHS1
+    chmod 0660 /dev/ttyHS1
 
 # NTFS and exFAT support
     insmod /system/lib/tntfs.ko
@@ -326,9 +331,9 @@ service hciattach /system/bin/bt_firmware_loader.sh
 # Start GPS daemon
   on boot
   service gps-daemon /system/bin/glgps -c /system/etc/gps/gpsconfig.xml
-  user root
-  socket gps seqpacket 0666 root root
-  group root
+  user gps
+#  socket gps seqpacket 0666 root root
+  group system
   class late_start
 
 # Mount usb drives as /usbdrive. Generally usb drives are formatted with FAT
@@ -341,7 +346,7 @@ service hciattach /system/bin/bt_firmware_loader.sh
 
 # configure MSC partition
 #service mischelp /system/bin/mischelp /dev/block/platform/sdhci-tegra.3/by-name/MC boot-recovery
-service mischelp /system/bin/mischelp /dev/block/mmcblk0p3 boot-recovery
+service mischelp /system/bin/mischelp /dev/block/mmcblk0p3
     disabled
     class main
     user root
@@ -349,7 +354,7 @@ service mischelp /system/bin/mischelp /dev/block/mmcblk0p3 boot-recovery
     oneshot
 
 on property:sys.shutdown.requested=1recovery
-    start mischelp
+    start recoveryd
 
 # start tf_daemon service
 service tf_daemon /system/bin/tf_daemon -storageDir /data/tf -d
