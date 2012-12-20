@@ -21,35 +21,21 @@ $(call inherit-product-if-exists, vendor/asus/tf700t/tf700t-vendor.mk)
 # Path to overlay files
 DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
 
-# Prebuilt kernel location
-ifeq ($(TARGET_PREBUILT_KERNEL),)
-        LOCAL_KERNEL := device/asus/tf700t/prebuilt/kernel
-else
-        LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
-endif
-
 # Files needed for boot image
 PRODUCT_COPY_FILES += \
-    $(LOCAL_KERNEL):kernel \
     $(LOCAL_PATH)/ramdisk/init.cardhu.rc:root/init.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.keyboard.rc:root/init.cardhu.keyboard.rc \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.usb.rc:root/init.cardhu.usb.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.cpu.rc:root/init.cardhu.cpu.rc \
-    $(LOCAL_PATH)/prebuilt/fstab.cardhu:root/fstab.cardhu
+    $(LOCAL_PATH)/ramdisk/fstab.cardhu:root/fstab.cardhu
 
 # Prebuilt configuration files
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/prebuilt/vold.fstab:system/etc/vold.fstab \
-    $(LOCAL_PATH)/prebuilt/gpsconfig.xml:system/etc/gps/gpsconfig.xml \
-    $(LOCAL_PATH)/prebuilt/mixer_paths.xml:system/etc/mixer_paths.xml \
-    $(LOCAL_PATH)/prebuilt/audio_policy.conf:system/etc/audio_policy.conf
-
-# Temp prebuild bins
-PRODUCT_COPY_FILES += \
-    vendor/extras/remount:system/xbin/remount \
-    vendor/extras/xbin/su:system/xbin/su \
-    vendor/extras/xbin/busybox:system/xbin/busybox 
+    $(LOCAL_PATH)/configs/vold.fstab:system/etc/vold.fstab \
+    $(LOCAL_PATH)/configs/gpsconfig.xml:system/etc/gps/gpsconfig.xml \
+    $(LOCAL_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf \
+    $(LOCAL_PATH)/configs/bt_vendor.conf:system/etc/bluetooth/bt_vendor.conf
 
 # Input device configuration files
 PRODUCT_COPY_FILES += \
@@ -62,8 +48,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/idc/raydium_ts.idc:system/usr/idc/raydium_ts.idc \
     $(LOCAL_PATH)/idc/sis_touch.idc:system/usr/idc/sis_touch.idc \
     $(LOCAL_PATH)/idc/Vendor_0457_Product_0817.idc:system/usr/idc/Vendor_0457_Product_0817.idc \
-    $(LOCAL_PATH)/prebuilt/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
-    $(LOCAL_PATH)/prebuilt/tegra-kbc.kl:system/usr/keylayout/tegra-kbc.kl
+    $(LOCAL_PATH)/configs/asusdec.kcm:system/usr/keychars/asusdec.kcm \
+    $(LOCAL_PATH)/configs/asusdec.kl:system/usr/keylayout/asusdec.kl \
+    $(LOCAL_PATH)/configs/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
+    $(LOCAL_PATH)/configs/tegra-kbc.kl:system/usr/keylayout/tegra-kbc.kl
 
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
@@ -84,6 +72,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml \
+    $(LOCAL_PATH)/asusdec/com.cyanogenmod.asusdec.xml:system/etc/permissions/com.cyanogenmod.asusdec.xml
 
 # Build characteristics setting 
 PRODUCT_CHARACTERISTICS := tablet
@@ -99,17 +88,17 @@ PRODUCT_PACKAGES += \
     com.android.future.usb.accessory \
     make_ext4fs \
     setup_fs \
-    power.cardhu \
     audio.a2dp.default \
     audio.usb.default \
-    audio.primary.cardhu \
     libtinyalsa \
     libaudioutils \
     libinvensense_mpl \
     AutoParts_tfp \
     blobpack_tfp \
     wifimacwriter \
-    mischelp 
+    mischelp \
+    com.cyanogenmod.asusdec \
+    libasusdec_jni
 
 # Torch
 PRODUCT_PACKAGES += \

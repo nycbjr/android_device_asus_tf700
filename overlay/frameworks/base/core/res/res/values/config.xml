@@ -22,7 +22,7 @@
 <resources>
     <string name="config_datause_iface" translatable="false">wlan0</string>
 
- <!--   <bool name="config_batterySdCardAccessibility">true</bool>-->
+    <bool name="config_batterySdCardAccessibility">true</bool>
 
     <bool name="config_allowAllRotations">true</bool>
 
@@ -40,8 +40,6 @@
     </string-array>
 
    <integer-array translatable="false" name="config_tether_upstream_types">
-        <item>1</item>
-        <item>7</item>
     </integer-array>
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
@@ -68,7 +66,7 @@
     <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
 
     <!-- Boolean indicating whether the wifi chipset has p2p support -->
-    <bool translatable="false" name="config_wifi_p2p_support">false</bool>
+    <bool translatable="false" name="config_wifi_p2p_support">true</bool>
 
     <!-- Boolean indicating whether the wifi chipset has dual frequency band support -->
     <bool translatable="false" name="config_wifi_dual_band_support">true</bool>
@@ -104,7 +102,7 @@
         <item>3000</item>
         <item>4000</item>
     </integer-array>
-    
+
     <!-- Array of output values for LCD backlight corresponding to the LUX values
          in the config_autoBrightnessLevels array.  This array should have size one greater
          than the size of the config_autoBrightnessLevels array.
@@ -155,11 +153,30 @@
         <item>0</item>
     </integer-array>
 
-    <!-- Package name providing network location support. -->
-<!--    <string name="config_networkLocationProviderPackageName" translatable="false">com.google.android.location</string> -->
-
-    <!-- Package name providing geocoder API support. -->
-    <!-- <string name="config_geocodeProviderPackageName" translatable="false">com.google.android.location</string> -->
+    <!-- Array of output values for keyboard backlight corresponding to the LUX values
+         in the config_autoBrightnessLevels array.  This array should have size one greater
+         than the size of the config_autoBrightnessLevels array.
+         This must be overridden in platform specific overlays -->
+    <integer-array name="config_autoBrightnessKeyboardBacklightValues">
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+    </integer-array>
 
     <integer name="config_downloadDataDirSize">200</integer>
 
@@ -170,36 +187,36 @@
 
     <bool name="config_sms_capable">false</bool>
 
- <!--   <bool name="config_lidControlsSleep">true</bool>    
+    <bool name="config_lidControlsSleep">true</bool>
 
     <integer name="config_lidOpenRotation">0</integer>
 
     <integer name="config_lidKeyboardAccessibility">1</integer>
 
-    <bool name="config_hasDockBattery">true</bool> -->
+    <!-- <bool name="config_hasDockBattery">true</bool> -->
 
-    <!--<string name="config_deviceKeyHandlerLib" translatable="false">/system/framework/com.cyanogenmod.asusdec.jar</string>
-    <string name="config_deviceKeyHandlerClass" translatable="false">com.cyanogenmod.asusdec.KeyHandler</string> -->
+    <!-- <string name="config_deviceKeyHandlerLib" translatable="false">/system/framework/com.cyanogenmod.asusdec.jar</string> -->
+    <!-- <string name="config_deviceKeyHandlerClass" translatable="false">com.cyanogenmod.asusdec.KeyHandler</string> -->
 
-   <!-- <bool name="config_screenOffAnimation">true</bool> -->
+    <bool name="config_screenOffAnimation">false</bool>
 
-   <!-- <bool name="config_hasRemovableLid">true</bool> -->
+    <!-- Enable lockscreen rotation by default -->
+    <bool name="config_enableLockScreenRotation">true</bool>
 
-    <!-- Base "touch slop" value used by ViewConfiguration as a
-         movement threshold where scrolling should begin.
+    <!-- <bool name="config_hasRemovableLid">true</bool> -->
 
-          -->
-    <dimen name="config_viewConfigurationTouchSlop">12dp</dimen>
+    <!-- If this is true, the screen will come on when you unplug usb/power/whatever. -->
+    <bool name="config_unplugTurnsOnScreen">true</bool>
 
-    <!-- Separate software navigation bar required on this device. -->
-    <bool name="config_showNavigationBar">true</bool>
+    <!-- Setting to false will disable CM's IME switcher implementation for tablets -->
+    <!-- <bool name="config_show_cmIMESwitcher">false</bool> -->
 
     <!-- Maximum wallpaper width for devices with very high-res screen (1920x1200)
          the wallpaper width suggestion by the launcher may be too large for
          the GPU to handle. -->
     <integer name="config_wallpaperMaxWidth">2048</integer>
 
-    <!-- Component name of the default wallpaper. This will be ImageWallpaper if not
-         specified -->
- <!--   <string name="default_wallpaper_component" translatable="false">com.android.magicsmoke/.MagicSmoke</string> -->
+
+    <bool name="config_showNavigationBar">true</bool>
+    <integer name="config_multiuserMaximumUsers">8</integer>
 </resources>

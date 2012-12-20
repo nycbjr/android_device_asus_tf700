@@ -5,13 +5,11 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
 on init
-    # See storage config details at http://source.android.com/tech/storage/
+    # for backwards compatibility
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage/emulated 0555 root root
-    mkdir /storage/sdcard1 0000 system system
-
+    mkdir /storage 0550 system sdcard_r
     export EXTERNAL_STORAGE /storage/emulated/legacy
-    export SECONDARY_STORAGE /storage/sdcard1
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
     export EMULATED_STORAGE_TARGET /storage/emulated
 
@@ -21,9 +19,14 @@ on init
     symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
 
-	
-    symlink /storage/sdcard1 /sd-ext
-    symlink /storage/sdcard1 /mnt/sdcard1
+    # Enable secondary storage
+    export SECONDARY_STORAGE /storage/sdcard1
+ 
+    # make the pathes for the external media mounts
+    mkdir /storage/sdcard1 0000 system system
+    mkdir /storage/sdcard2 0000 system system
+    mkdir /storage/usbdisk0 0000 system system
+    mkdir /storage/usbdisk1 0000 system system
 
 on fs
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
@@ -39,7 +42,7 @@ on post-fs-data
 
     mkdir /data/misc/wminput 0776 system system
 
-    # we will remap this as /storage/sdcard0 with the sdcard fuse tool
+    # we will remap this as /mnt/sdcard with the sdcard fuse tool
     mkdir /data/media 0770 media_rw media_rw
     chown media_rw media_rw /data/media
 
@@ -65,10 +68,9 @@ on boot
     chown system system /sys/class/graphics/fb0/device/smartdimmer/enable
     chown system system /sys/class/graphics/fb0/device/smartdimmer/aggressiveness
     chown system system /sys/class/graphics/fb0/device/smartdimmer/phase_in_adjustments
-    chown system system /sys/devices/tegradc.0/smartdimmer/enable
-    chown system system /sys/devices/tegradc.0/smartdimmer/aggressiveness
-    chown system system /sys/devices/tegradc.0/smartdimmer/phase_in_adjustments
-    chown system system /sys/devices/tegradc.0/smartdimmer/bin_width
+
+# smartdimmer parameters
+    write /sys/class/graphics/fb0/device/smartdimmer/enable 0
 
 # power
     chown system system /sys/kernel/tegra_cap/core_cap_level
@@ -142,11 +144,6 @@ on boot
     chown system system /sys/devices/system/cpu/cpufreq/interactive/sustain_load
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/sustain_load
 
-
-# Display Settings
-    write /sys/devices/tegradc.0/smartdimmer/enable 1
-    write /sys/devices/tegradc.0/smartdimmer/bin_width 1
-
 # Setup CPU for "balanced" mode 
     setprop sys.cpu.mode 1
 
@@ -154,52 +151,47 @@ on boot
     setprop sys.dockkeys.change 0
 
 on property:ro.debuggable=1
-	
-# Touchscreen Config-UI interface	
-chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/mem_access
-chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/debug_enable	
-chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/pause_driver
-chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/slowscan_enable
+    # Touchscreen Config-UI interface
+    chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/mem_access
+    chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/debug_enable
+    chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/pause_driver
+    chmod 666 /sys/devices/platform/tegra-i2c.1/i2c-1/1-005a/slowscan_enable
 
 # Fuse
     chmod 444 /sys/firmware/fuse/odm_production_mode
 
 # Default Read Ahead value for sdcards
-    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
-    write /sys/block/mmcblk1/queue/read_ahead_kb 2048
+    write /sys/block/mmcblk0/bdi/read_ahead_kb   4096
+    write /sys/block/mmcblk1/bdi/read_ahead_kb   4096
+    write /sys/block/mmcblk0/queue/read_ahead_kb 4096
+    write /sys/block/mmcblk1/queue/read_ahead_kb 4096
 
 # Wiimote connect status
     write /data/misc/wminput/connected 0
     chmod 0666 /data/misc/wminput/connected
 
 # GPS
-#    mkdir /data/gps
-#    chown system system /data/gps
-#    chmod 770 /data/gps
+    mkdir /data/gps
+    chown system system /data/gps
+    chmod 770 /data/gps
 
 # GPS init
     write /sys/class/gpio/export 162
     write /sys/class/gpio/gpio162/value 0
     write /sys/class/gpio/gpio162/direction out
-    chown gps system /sys/class/gpio/gpio162/value
+    chown root system /sys/class/gpio/gpio162/value
     chmod 0664 /sys/class/gpio/gpio162/value
-    mkdir /data/gps
-    chown gps system /data/gps
-    chmod 770 /data/gps
-    chown gps system /dev/ttyHS1
-    chmod 0660 /dev/ttyHS1
 
 # NTFS and exFAT support
     insmod /system/lib/tntfs.ko
     insmod /system/lib/texfat.ko
 
 # insmod cfg80211.ko for cfg80211 and P2P mode.
-#    insmod /system/lib/modules/cfg80211.ko
+    insmod /system/lib/modules/cfg80211.ko
 
 # Touch
     start touch_update
     chown system system /proc/ektf_dbg
-    chmod 0660 /proc/ektf_dbg
 
 # BB mapping symbolic name to the logging ttyACM port
     symlink /dev/ttyACM2 /dev/log_modem
@@ -310,12 +302,14 @@ service iprenew_rmnet1 /system/bin/dhcpcd -n
     oneshot
 # Sensor load calibration files end
 
-# virtual sdcard daemon running as media_rw (1023)
+# create virtual SD card at /mnt/sdcard, based on the /data/media directory
+# deamon will drop to user/group system/media_rw after initializing
+# underlying files in /data/media wil be created with user and group media_rw (1023)
 service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
     class late_start
 
 # bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
-service bugreport /system/bin/dumpstate -d -v -o /data/storage/bugreports/bugreport
+service bugreport /system/bin/bugmailer.sh -b /system/media/audio/ui/Dock.ogg -e /system/media/audio/ui/Undock.ogg
     class main
     disabled
     oneshot
@@ -331,9 +325,9 @@ service hciattach /system/bin/bt_firmware_loader.sh
 # Start GPS daemon
   on boot
   service gps-daemon /system/bin/glgps -c /system/etc/gps/gpsconfig.xml
-  user gps
-#  socket gps seqpacket 0666 root root
-  group system
+  user root
+  socket gps seqpacket 0666 root root
+  group root
   class late_start
 
 # Mount usb drives as /usbdrive. Generally usb drives are formatted with FAT
@@ -345,8 +339,7 @@ service hciattach /system/bin/bt_firmware_loader.sh
 #  umount /mnt/usbdrive
 
 # configure MSC partition
-#service mischelp /system/bin/mischelp /dev/block/platform/sdhci-tegra.3/by-name/MC boot-recovery
-service mischelp /system/bin/mischelp /dev/block/mmcblk0p3
+service mischelp /system/bin/mischelp /dev/block/platform/sdhci-tegra.3/by-name/MC boot-recovery
     disabled
     class main
     user root
@@ -354,31 +347,24 @@ service mischelp /system/bin/mischelp /dev/block/mmcblk0p3
     oneshot
 
 on property:sys.shutdown.requested=1recovery
-    start recoveryd
+    start mischelp
 
-# start tf_daemon service
+# Prepare TF service
 service tf_daemon /system/bin/tf_daemon -storageDir /data/tf -d
+    disabled
     class main
     user root
     group shell
+    oneshot
 
-# may restart due to /data/tf not existing yet
-on property:init.svc.tf_daemon=restarting
+# Create data directory and start service
+on property:tf.enable=y
     mkdir /data/tf
+    start tf_daemon
 
 # stop ril-daemon if this is a wifi-only device
 on property:ro.carrier=wifi-only
     stop ril-daemon
-
-# Enable NvCpuD, and set it to never poll config again
-#on boot
-#    setprop nvcpud.enabled true
-#    setprop nvcpud.config_refresh_ms -1
-
-#service nvcpud /system/bin/nvcpud
-#    class main
-#    user root
-#    group root
 
 service ps3service /system/bin/ps3service
     class main
@@ -418,20 +404,20 @@ on property:ril.testmode=0
 # End of testmode patches.
 
 # insmod bcmdhd driver for BCM4330/BCM4334
-#on property:wifi.module.type=0
-#    insmod /system/lib/modules/bcmdhd.ko
+on property:wifi.module.type=0
+    insmod /system/lib/modules/bcmdhd.ko
 
-#on property:wifi.module.type=2
-#    insmod /system/lib/modules/bcmdhd.ko
+on property:wifi.module.type=2
+    insmod /system/lib/modules/bcmdhd.ko
 
-#on property:wifi.module.type=4
-#    insmod /system/lib/modules/bcmdhd.ko
+on property:wifi.module.type=4
+    insmod /system/lib/modules/bcmdhd.ko
 
-#on property:wifi.module.type=5
-#    insmod /system/lib/modules/bcmdhd_34.ko
+on property:wifi.module.type=5
+    insmod /system/lib/modules/bcmdhd_34.ko
 
-#on property:wifi.module.type=6
-#    insmod /system/lib/modules/bcmdhd_34.ko
+on property:wifi.module.type=6
+    insmod /system/lib/modules/bcmdhd_34.ko
 
 # Blutooth DUN support
 service BtService /system/bin/sh /system/etc/BtService.sh
