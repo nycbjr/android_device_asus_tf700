@@ -15,11 +15,11 @@
 #
 
 # Audio Options
-USE_PROPRIETARY_AUDIO_EXTENSIONS := true
+USE_PROPRIETARY_AUDIO_EXTENSIONS := false
 BOARD_USES_GENERIC_AUDIO := false
 BOARD_USES_ALSA_AUDIO := false
-BOARD_USES_TINY_AUDIO_HW := false
-COMMON_GLOBAL_CFLAGS += -DMR0_AUDIO_BLOB
+BOARD_USES_TINY_AUDIO_HW := true
+#COMMON_GLOBAL_CFLAGS += -DMR0_AUDIO_BLOB
 
 # inherit from the proprietary version
 -include vendor/asus/tf700t/BoardConfigVendor.mk
@@ -49,7 +49,7 @@ BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE :=
 
 # EGL settings
-BOARD_EGL_NEEDS_LEGACY_FB := true
+#BOARD_EGL_NEEDS_LEGACY_FB := true
 BOARD_EGL_CFG := device/asus/tf700t/configs/egl.cfg
 USE_OPENGL_RENDERER := true
 
@@ -87,8 +87,11 @@ BOARD_FLASH_BLOCK_SIZE := 4096
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
 # Build kernel from source
-TARGET_KERNEL_SOURCE := kernel/asus/tf700t
-TARGET_KERNEL_CONFIG := cyanogenmod_cardhu_defconfig 
+#TARGET_KERNEL_SOURCE := kernel/asus/tf700t
+#TARGET_KERNEL_CONFIG := cyanogenmod_cardhu_defconfig 
+
+# Prebuilt Kernel Fallback
+TARGET_PREBUILT_KERNEL := device/asus/tf700t/kernel
 
 # Custom Tools
 TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/asus/tf700t/releasetools/tf700t_ota_from_target_files

@@ -18,11 +18,19 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 # Inherit tf700t vendor setup
 $(call inherit-product-if-exists, vendor/asus/tf700t/tf700t-vendor.mk)
 
+# Prebuilt kernel location
+ifeq ($(TARGET_PREBUILT_KERNEL),)
+        LOCAL_KERNEL := device/asus/tf700t/kernel
+else
+        LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+endif
+
 # Path to overlay files
 DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
 
 # Files needed for boot image
 PRODUCT_COPY_FILES += \
+    $(LOCAL_KERNEL):kernel \
     $(LOCAL_PATH)/ramdisk/init.cardhu.rc:root/init.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.keyboard.rc:root/init.cardhu.keyboard.rc \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
@@ -90,7 +98,7 @@ PRODUCT_PACKAGES += \
     setup_fs \
     audio.a2dp.default \
     audio.usb.default \
-    libtinyalsa \
+    audio.primary.cardhu \
     libaudioutils \
     libinvensense_mpl \
     AutoParts_tfp \
