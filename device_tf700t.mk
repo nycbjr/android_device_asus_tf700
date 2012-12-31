@@ -18,15 +18,15 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 # Inherit tf700t vendor setup
 $(call inherit-product-if-exists, vendor/asus/tf700t/tf700t-vendor.mk)
 
+# Path to overlay files
+DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
+
 # Prebuilt kernel location
 ifeq ($(TARGET_PREBUILT_KERNEL),)
         LOCAL_KERNEL := device/asus/tf700t/kernel
 else
         LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
 endif
-
-# Path to overlay files
-DEVICE_PACKAGE_OVERLAYS += device/asus/tf700t/overlay
 
 # Files needed for boot image
 PRODUCT_COPY_FILES += \
@@ -36,13 +36,13 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/ramdisk/ueventd.cardhu.rc:root/ueventd.cardhu.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.usb.rc:root/init.cardhu.usb.rc \
     $(LOCAL_PATH)/ramdisk/init.cardhu.cpu.rc:root/init.cardhu.cpu.rc \
-    $(LOCAL_PATH)/ramdisk/fstab.cardhu:root/fstab.cardhu
+    $(LOCAL_PATH)/prebuilt/fstab.cardhu:root/fstab.cardhu
 
 # Prebuilt configuration files
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/vold.fstab:system/etc/vold.fstab \
-    $(LOCAL_PATH)/configs/gpsconfig.xml:system/etc/gps/gpsconfig.xml \
-    $(LOCAL_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf \
+    $(LOCAL_PATH)/prebuilt/vold.fstab:system/etc/vold.fstab \
+    $(LOCAL_PATH)/prebuilt/gpsconfig.xml:system/etc/gps/gpsconfig.xml \
+    $(LOCAL_PATH)/prebuilt/audio_policy.conf:system/etc/audio_policy.conf \
     $(LOCAL_PATH)/configs/bt_vendor.conf:system/etc/bluetooth/bt_vendor.conf
 
 # Input device configuration files
@@ -56,10 +56,10 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/idc/raydium_ts.idc:system/usr/idc/raydium_ts.idc \
     $(LOCAL_PATH)/idc/sis_touch.idc:system/usr/idc/sis_touch.idc \
     $(LOCAL_PATH)/idc/Vendor_0457_Product_0817.idc:system/usr/idc/Vendor_0457_Product_0817.idc \
-    $(LOCAL_PATH)/configs/asusdec.kcm:system/usr/keychars/asusdec.kcm \
-    $(LOCAL_PATH)/configs/asusdec.kl:system/usr/keylayout/asusdec.kl \
-    $(LOCAL_PATH)/configs/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
-    $(LOCAL_PATH)/configs/tegra-kbc.kl:system/usr/keylayout/tegra-kbc.kl
+    $(LOCAL_PATH)/prebuilt/asusdec.kcm:system/usr/keychars/asusdec.kcm \
+    $(LOCAL_PATH)/prebuilt/asusdec.kl:system/usr/keylayout/asusdec.kl \
+    $(LOCAL_PATH)/prebuilt/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
+    $(LOCAL_PATH)/prebuilt/tegra-kbc.kl:system/usr/keylayout/tegra-kbc.kl
 
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
@@ -98,7 +98,7 @@ PRODUCT_PACKAGES += \
     setup_fs \
     audio.a2dp.default \
     audio.usb.default \
-    audio.primary.cardhu \
+    libtinyalsa \
     libaudioutils \
     libinvensense_mpl \
     AutoParts_tfp \

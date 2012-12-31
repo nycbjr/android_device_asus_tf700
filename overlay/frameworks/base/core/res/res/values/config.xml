@@ -189,7 +189,7 @@
 
     <bool name="config_lidControlsSleep">true</bool>
 
-    <integer name="config_lidOpenRotation">0</integer>
+    <!--<integer name="config_lidOpenRotation">0</integer>-->
 
     <integer name="config_lidKeyboardAccessibility">1</integer>
 
@@ -197,8 +197,6 @@
 
     <!-- <string name="config_deviceKeyHandlerLib" translatable="false">/system/framework/com.cyanogenmod.asusdec.jar</string> -->
     <!-- <string name="config_deviceKeyHandlerClass" translatable="false">com.cyanogenmod.asusdec.KeyHandler</string> -->
-
-    <bool name="config_screenOffAnimation">false</bool>
 
     <!-- Enable lockscreen rotation by default -->
     <bool name="config_enableLockScreenRotation">true</bool>
