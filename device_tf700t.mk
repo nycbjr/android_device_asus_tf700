@@ -112,6 +112,24 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     Torch
 
+# Tegra 3 spacific overrides
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.tegra.nvmmlite=1 \
+    persist.sys.NV_FPSLIMIT=60
+
+# UI
+PRODUCT_PROPERTY_OVERRIDES += \
+    debug.performance.tuning=1 \
+    video.accelerate.hw=1 \
+    ro.kernel.android.checkjni=0 \
+    ro.kernel.checkjni=0 \
+    ro.mot.eri.losalert.delay=1000 \
+    persist.sys.strictmode.visual=0 \
+    persist.sys.strictmode.disable=1 \
+    dalvik.vm.execution-mode=int:jit \
+    com.ti.omap_enhancement=true \
+    windowsmgr.max_events_per_sec=300
+
 # Infinity specific properties
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
