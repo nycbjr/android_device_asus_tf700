@@ -813,7 +813,7 @@ def main(argv):
                                               "worker_threads=",
                                               "aslr_mode=",
                                               "backup=",
-                                              "override_device="
+                                              "override_device=",
                                               "no_assert="],
                              extra_option_handler=option_handler)
 
